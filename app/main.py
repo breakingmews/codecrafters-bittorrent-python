@@ -109,12 +109,12 @@ def main():
             if command == "magnet_handshake":
                 print(f"Peer Metadata Extension ID: {peers_metadata_extension_id}")
                 print(f"Peer ID: {handshake.peer_id}")
-                _log.info(f"Peers:\n{"\n".join(peers)}")
+                _log.debug(f"Peers:\n{"\n".join(peers)}")
 
             if command == "magnet_info":
                 metadata = peer.request_metadata(peers_metadata_extension_id)
                 torrent_file = TorrentFile.from_metadata(magnet, metadata)
-                _log.info(torrent_file)
+                print(torrent_file)
 
     # ./your_bittorrent.sh magnet_download_piece -o /tmp/test-piece-0 <magnet-link> 0
     if command == "magnet_download_piece":

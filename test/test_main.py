@@ -1,5 +1,6 @@
 import unittest
-from app.main import decode_value, decode_file, parse_hashes
+
+from app.main import decode_value, decode_file, parse_hashes, encode_hash
 
 
 class TestMain(unittest.TestCase):
@@ -25,7 +26,7 @@ class TestMain(unittest.TestCase):
 
     def test_decode_bencode_dict(self):
         decoded = decode_value(b"d3:foo3:bar5:helloi52ee")
-        expected = {"foo":"bar","hello":52}
+        expected = {"foo": "bar", "hello": 52}
         self.assertEqual(expected, decoded)
 
     @unittest.skip("Test file generator")
@@ -52,8 +53,11 @@ class TestMain(unittest.TestCase):
         expected = "3c34309faebf01e49c0f63c90b7edcc2259b6ad0\nb8519b2ea9bb373ff567f644428156c98a1d00fc\n9dc81366587536f48c2098a1d79692f2590fd9a6\n033c61e717f8c0d1e55850680eb451e3543b6203\n6f54e746ec369f65f32d45f77b1f1c37621fb965\nc656704b78107ed553bd0813f92fef780267c07b\n7431b8683137d20ff594b1f1bf3f8835165d68fb\n0432bd8e779608d27782b779c7738062e9b50ab5\nd6bc0409a0f3a9503857669d47fe752d4577ea00\na86ee6abbc30cddb800a0b62d7a296111166d839\n783f52b70f0c902d56196bd3ee7f379b5db57e3b\n3d8db9e34db63b4ba1be27930911aa37b3f997dd\n"
         self.assertEqual(expected, hashes)
 
-
-
+    def test_encode_hash(self):
+        hash_ = "d69f91e6b2ae4c542468d1073a71d4ea13879a7f"
+        expected = "%d6%9f%91%e6%b2%ae%4c%54%24%68%d1%07%3a%71%d4%ea%13%87%9a%7f"
+        encoded = encode_hash(hash_)
+        self.assertEqual(expected, encoded)
 
 
 if __name__ == '__main__':

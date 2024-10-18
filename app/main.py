@@ -26,7 +26,8 @@ def download_piece(destination: str, torrent_filepath: str, piece_nr: int):
     peer = Peer(peers[random.randint(0, len(peers) - 1)])
     try:
         peer.shake_hands(torrent_file)
-        peer.interested()
+        peer.receive_bitfield()
+        peer.send_interested()
         piece = peer.request_piece(torrent_file, piece_nr)
         save_piece(destination, piece)
     except Exception:
@@ -69,7 +70,7 @@ def main():
         if command == "handshake":
             peer_address = sys.argv[3]
             peer = Peer(peer_address)
-            handshake, _ = peer.shake_hands(torrent_file)
+            handshake = peer.shake_hands(torrent_file)
             print(f"Peer ID: {handshake.peer_id}")
 
     # ./your_bittorrent.sh download_piece -o /tmp/test-piece-0 sample.torrent 0

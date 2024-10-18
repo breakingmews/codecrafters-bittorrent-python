@@ -1,5 +1,4 @@
 import socket
-from typing import Tuple
 
 from tqdm import tqdm
 
@@ -76,10 +75,10 @@ class Peer:
 
         return block
 
-    def shake_hands(self, torrent_file: TorrentFile) -> Tuple[Handshake, BitField]:
+    def shake_hands(self, torrent_file: TorrentFile) -> Handshake:
         handshake = Handshake(torrent_file.sha1_info_hash)
         print(f"Handshake: {handshake}")
-        response = self.send(handshake.encode())
+        response = self.send(handshake.encode(), 68)
         print(f"\nHandshake response length: {len(response)}")
         print(f"Handshake response: {response}")
 
@@ -87,15 +86,9 @@ class Peer:
         print(f"Handshake decoded: {decoded}")
         print(f"\nPeer ID: {handshake.peer_id}")
 
-        if len(response) == 68:
-            bitfield_bytes = self.wait(BitField)
-        else:
-            bitfield_bytes = response[68:]
-        bitfield: BitField = BitField.decode(bitfield_bytes)
+        return decoded
 
-        return decoded, bitfield
-
-    def interested(self) -> Unchoke:
+    def send_interested(self) -> Unchoke:
         print("\nSending Interested")
         interested = Interested().encode()
         response = self.send(interested)
@@ -103,6 +96,11 @@ class Peer:
         unchoke = Unchoke.decode(response)
 
         return unchoke
+
+    def receive_bitfield(self):
+        bitfield_bytes = self.wait(BitField)
+        bitfield: BitField = BitField.decode(bitfield_bytes)
+        return bitfield
 
     def request_piece(self, torrent_file: TorrentFile, piece_nr: int) -> bytes:
         blocks = []

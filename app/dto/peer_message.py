@@ -34,11 +34,11 @@ class Handshake:
 
     def encode(self):
         encoded = (
-                struct.pack("!B", self._length)
-                + self._protocol.encode()
-                + struct.pack("!BBBBBBBB", *self.buffer)
-                + self.sha1_info_hash
-                + self.peer_id.encode()
+            struct.pack("!B", self._length)
+            + self._protocol.encode()
+            + struct.pack("!BBBBBBBB", *self.buffer)
+            + self.sha1_info_hash
+            + self.peer_id.encode()
         )
         return encoded
 
@@ -95,7 +95,7 @@ class BitField(PeerMessage):
             return
 
         length, id_ = struct.unpack("!IB", buffer[:5])
-        payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5: 5 + length])
+        payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5 : 5 + length])
         bitfield = BitField(id_=id_, length=length, payload=payload)
         _log.debug(f"Bitfield decoded: {bitfield}")
         return bitfield

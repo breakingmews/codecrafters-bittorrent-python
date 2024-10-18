@@ -2,7 +2,14 @@ import json
 import logging
 
 from app.argparser import parse_args
-from app.client import download, parse_magnet_link, save_file, magnet_download, magnet_handshake, magnet_info
+from app.client import (
+    download,
+    magnet_download,
+    magnet_handshake,
+    magnet_info,
+    parse_magnet_link,
+    save_file,
+)
 from app.codec import decode_value
 from app.config import log_config
 from app.dto.torrent_file import TorrentFile
@@ -76,7 +83,9 @@ def main():
             magnet_link = args.magnet_link
 
             handshake, extension_handshake = magnet_handshake(magnet_link)
-            print(f"Peer Metadata Extension ID: {extension_handshake.peers_metadata_extension_id}")
+            print(
+                f"Peer Metadata Extension ID: {extension_handshake.peers_metadata_extension_id}"
+            )
             print(f"Peer ID: {handshake.peer_id}")
 
         case "magnet_info":

@@ -22,7 +22,7 @@ class Peer:
         self.address = Peer._get_address(peer)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect(self.address)
-        _log.debug(f"\nConnected to peer: {self.address}")
+        _log.debug(f"Connected to peer: {self.address}")
 
     def __del__(self):
         _log.debug("Destroying peer. Closing connection")
@@ -40,7 +40,7 @@ class Peer:
         return self.socket.recv(size)
 
     def wait(self, message_type: any, size=1024) -> bytes:
-        _log.debug(f"\nWait for {message_type}")
+        _log.debug(f"Wait for {message_type}")
         response = self.socket.recv(size)
         _log.debug(f"Received: {response}")
         is_keep_alive = PeerMessage.is_keep_alive(response)
@@ -86,12 +86,12 @@ class Peer:
         )
         _log.debug(f"Handshake: {handshake}")
         response = self.send(handshake.encode(), 68)
-        _log.debug(f"\nHandshake response length: {len(response)}")
+        _log.debug(f"Handshake response length: {len(response)}")
         _log.debug(f"Handshake response: {response}")
 
         decoded: Handshake = Handshake.decode(response[:68])
         _log.debug(f"Handshake decoded: {decoded}")
-        _log.debug(f"\nPeer ID: {handshake.peer_id}")
+        _log.debug(f"Peer ID: {handshake.peer_id}")
 
         return decoded
 
@@ -110,7 +110,7 @@ class Peer:
         return decoded
 
     def send_interested(self) -> Unchoke:
-        _log.debug("\nSending Interested")
+        _log.debug("Sending Interested")
         interested = Interested().encode()
         response = self.send(interested)
         _log.debug(f"Received Unchoke: {response}")
@@ -130,12 +130,12 @@ class Peer:
         blocks = []
         piece = b""
         for block in torrent_file.pieces[piece_nr].blocks:
-            _log.debug(f"\n{block}")
+            _log.debug(f"{block}")
             request = Request(piece_nr, block.offset, block.size)
             response = self.request_block(request)
             blocks.append(response)
             piece = b"".join(blocks)
             _log.debug(f"Piece size: {len(piece)}")
 
-        _log.debug(f"\nReceived Piece {piece_nr}, size: {len(piece)}")
+        _log.debug(f"Received Piece {piece_nr}, size: {len(piece)}")
         return piece

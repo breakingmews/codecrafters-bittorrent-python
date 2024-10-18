@@ -3,7 +3,7 @@ import random
 from typing import Tuple
 from urllib.parse import parse_qs, urlparse
 
-from app.dto.magnet import Magnet, ExtensionHandshake
+from app.dto.magnet import ExtensionHandshake, Magnet
 from app.dto.peer_message import Handshake
 from app.dto.torrent_file import TorrentFile
 from app.peer import Peer
@@ -70,9 +70,7 @@ def magnet_info(magnet_link: str) -> TorrentFile:
         extension_handshake = peer.send_extensions_handshake()
         _log.debug(f"Extension handshake: {extension_handshake}")
 
-        peers_metadata_extension_id = (
-            extension_handshake.peers_metadata_extension_id
-        )
+        peers_metadata_extension_id = extension_handshake.peers_metadata_extension_id
         metadata = peer.request_metadata(peers_metadata_extension_id)
     torrent_file = TorrentFile.from_metadata(magnet, metadata)
 
@@ -110,9 +108,7 @@ def magnet_download(destination, magnet_link, piece_nr):
     if handshake.supports_extensions:
         extension_handshake = peer.send_extensions_handshake()
         peer.send_interested()
-        peers_metadata_extension_id = (
-            extension_handshake.peers_metadata_extension_id
-        )
+        peers_metadata_extension_id = extension_handshake.peers_metadata_extension_id
 
         metadata = peer.request_metadata(peers_metadata_extension_id)
         torrent_file = TorrentFile.from_metadata(magnet, metadata)

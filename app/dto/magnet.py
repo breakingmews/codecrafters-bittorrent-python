@@ -27,9 +27,9 @@ class Extension:
         payload_encoded = bencodepy.encode(self.payload)
         extension_length = 1 + 1 + len(payload_encoded)
         extension_encoded = (
-                struct.pack("!I", extension_length)
-                + struct.pack("!BB", self.id_, self.extension_message_id)
-                + payload_encoded
+            struct.pack("!I", extension_length)
+            + struct.pack("!BB", self.id_, self.extension_message_id)
+            + payload_encoded
         )
         return extension_encoded
 
@@ -38,7 +38,7 @@ class Extension:
         ext_buffer = buffer
         if PeerMessage.is_bitfield(buffer):
             bitfield = BitField.decode(buffer)
-            ext_buffer = buffer[4 + bitfield.length:]
+            ext_buffer = buffer[4 + bitfield.length :]
         extension = Extension()
         extension.length = struct.unpack("!I", ext_buffer[:4])[0]
         extension.id_ = struct.unpack("!B", ext_buffer[4:5])[0]
@@ -72,7 +72,7 @@ class Data(Metadata):
         ext_buffer = buffer
         if PeerMessage.is_bitfield(buffer):
             bitfield = BitField.decode(buffer)
-            ext_buffer = buffer[4 + bitfield.length:]
+            ext_buffer = buffer[4 + bitfield.length :]
 
         data = Data()
         data.length = struct.unpack("!I", ext_buffer[:4])[0]

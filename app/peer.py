@@ -17,7 +17,7 @@ class Peer:
         self.address = Peer._get_address(peer)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect(self.address)
-        print(f"\nConnected to peer: {self.address}")
+        # print(f"\nConnected to peer: {self.address}")
 
     @staticmethod
     def _get_address(peer: str):

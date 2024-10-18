@@ -36,7 +36,7 @@ def main():
     if command in ("info", "peers", "handshake"):
         filepath = sys.argv[2]
         torrent_file = TorrentFile(filepath)
-        # print(torrent_file)
+        print(torrent_file)
 
         # ./your_bittorrent.sh info sample.torrent
         if command == "info":

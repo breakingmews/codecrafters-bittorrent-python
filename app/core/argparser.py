@@ -14,7 +14,7 @@ def parse_args() -> Namespace:
     parser = argparse.ArgumentParser(
         description="BitTorrent Client", prog="./your_bittorrent.sh"
     )
-    parser.add_argument("-v", dest="verbose", action='store_true')
+    parser.add_argument("-v", dest="verbose", action="store_true")
     subparsers = parser.add_subparsers(dest="command")
 
     parser_decode = subparsers.add_parser("decode", help="d3:foo3:bar5:helloi52ee")

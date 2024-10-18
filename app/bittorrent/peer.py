@@ -1,5 +1,6 @@
 import logging
 import socket
+import struct
 
 from app.dto.magnet import Data, ExtensionHandshake
 from app.dto.magnet import Request as ExtensionRequest
@@ -34,25 +35,18 @@ class Peer:
         _log.debug(f"Peer address: {address}")
         return address
 
-    def send(self, buffer: bytes, size=1024) -> bytes:
+    def send(self, buffer: bytes) -> None:
         _log.debug(f"Sending: {buffer}")
         self.socket.sendall(buffer)
-        return self.socket.recv(size)
 
-    def wait(self, message_type: any, size=1024) -> bytes:
-        _log.debug(f"Wait for {message_type}")
-        response = self.socket.recv(size)
-        _log.debug(f"Received: {response}")
-        is_keep_alive = PeerMessage.is_keep_alive(response)
-        expected_message_type = (
-            False
-            if is_keep_alive
-            else PeerMessage.decode(response).id_ == message_type.id_
-        )
-        wait_next = is_keep_alive or not expected_message_type
-        if wait_next:
-            self.wait(message_type, size)
-        return response
+    def receive(self):
+        length_prefix = self.socket.recv(4)
+        if PeerMessage.is_keep_alive(length_prefix):
+            _log.debug("Received 'Keep alive'")
+            return length_prefix
+        length = struct.unpack("!I", length_prefix)[0]
+        buffer = self.socket.recv(length)
+        return length_prefix + buffer
 
     def request_block(self, request: Request) -> bytes:
         _log.debug(f"Request block: {request}")
@@ -85,26 +79,30 @@ class Peer:
             sha1_info_hash=sha1_info_hash, supports_extensions=supports_extensions
         )
         _log.debug(f"Handshake: {handshake}")
-        response = self.send(handshake.encode(), 68)
+        self.send(handshake.encode())
+        response = self.socket.recv(68)
         _log.debug(f"Handshake response length: {len(response)}")
         _log.debug(f"Handshake response: {response}")
 
-        decoded: Handshake = Handshake.decode(response[:68])
+        decoded: Handshake = Handshake.decode(response)
         _log.debug(f"Handshake decoded: {decoded}")
         _log.debug(f"Peer ID: {handshake.peer_id}")
 
         return decoded
 
     def send_extensions_handshake(self):
-        handshake = ExtensionHandshake()
-        response = self.send(handshake.encode())
+        handshake = ExtensionHandshake().encode()
+        _log.debug(f"Sending Extensions Handshake: {handshake}")
+        self.send(handshake)
+        response = self.receive()
         _log.debug(f"Extensions Handshake response: {response}")
         decoded: ExtensionHandshake = ExtensionHandshake.decode(response)
         return decoded
 
     def request_metadata(self, peers_metadata_extension_id: int):
         request = ExtensionRequest(peers_metadata_extension_id)
-        response = self.send(request.encode())
+        self.send(request.encode())
+        response = self.receive()
         _log.debug(f"Metadata response: {response}")
         decoded: Data = Data.decode(response)
         return decoded
@@ -112,14 +110,15 @@ class Peer:
     def send_interested(self) -> Unchoke:
         _log.debug("Sending Interested")
         interested = Interested().encode()
-        response = self.send(interested)
+        self.send(interested)
+        response = self.receive()
         _log.debug(f"Received Unchoke: {response}")
         unchoke = Unchoke.decode(response)
 
         return unchoke
 
     def receive_bitfield(self):
-        bitfield_bytes = self.wait(BitField)
+        bitfield_bytes = self.receive()
         _log.debug(f"Received Bitfield: {bitfield_bytes}")
         bitfield: BitField = BitField.decode(bitfield_bytes)
         _log.debug(f"Received Bitfield: {bitfield}")

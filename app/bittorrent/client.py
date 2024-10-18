@@ -65,6 +65,8 @@ def magnet_info(magnet_link: str) -> TorrentFile:
     )
     _log.debug(f"Handshake: {handshake}")
 
+    peer.receive_bitfield()
+
     metadata = None
     if handshake.supports_extensions:
         extension_handshake = peer.send_extensions_handshake()
@@ -87,6 +89,8 @@ def magnet_handshake(magnet_link: str) -> Tuple[Handshake, ExtensionHandshake]:
     )
     _log.debug(f"Handshake: {handshake}")
 
+    peer.receive_bitfield()
+
     extension_handshake = None
     if handshake.supports_extensions:
         extension_handshake = peer.send_extensions_handshake()
@@ -104,6 +108,8 @@ def magnet_download(destination, magnet_link, piece_nr):
         sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True
     )
     _log.debug(f"Handshake: {handshake}")
+
+    peer.receive_bitfield()
 
     if handshake.supports_extensions:
         extension_handshake = peer.send_extensions_handshake()

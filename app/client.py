@@ -15,10 +15,10 @@ def save_file(destination: str, content: bytes):
 
 
 def download(torrent_file: TorrentFile, piece_nr: int = None):
-    print(f"\n{torrent_file}")
+    # print(f"\n{torrent_file}")
 
     peers = Tracker.get_peers(torrent_file)
-    print(f"\nPeers:\n{"\n".join(peers)}")
+    # print(f"\nPeers:\n{"\n".join(peers)}")
 
     peer = Peer(peers[random.randint(0, len(peers) - 1)])
     try:

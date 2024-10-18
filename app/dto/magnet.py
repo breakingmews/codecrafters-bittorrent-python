@@ -27,9 +27,9 @@ class Extension:
         payload_encoded = bencodepy.encode(self.payload)
         extension_length = 1 + 1 + len(payload_encoded)
         extension_encoded = (
-            struct.pack("!I", extension_length)
-            + struct.pack("!BB", self.id_, self.extension_message_id)
-            + payload_encoded
+                struct.pack("!I", extension_length)
+                + struct.pack("!BB", self.id_, self.extension_message_id)
+                + payload_encoded
         )
         return extension_encoded
 
@@ -38,7 +38,7 @@ class Extension:
         ext_buffer = buffer
         if PeerMessage.is_bitfield(buffer):
             bitfield = BitField.decode(buffer)
-            ext_buffer = buffer[4 + bitfield.length :]
+            ext_buffer = buffer[4 + bitfield.length:]
         extension = Extension()
         extension.length = struct.unpack("!I", ext_buffer[:4])[0]
         extension.id_ = struct.unpack("!B", ext_buffer[4:5])[0]
@@ -46,15 +46,15 @@ class Extension:
         extension.payload = bencodepy.decode(ext_buffer[6:])
         return extension
 
+    @property
+    def peers_metadata_extension_id(self):
+        return self.payload[b"m"][b"ut_metadata"]
+
 
 @dataclass
 class ExtensionHandshake(Extension):
     def __init__(self):
         self.payload = {"m": {"ut_metadata": 16}}
-
-    @property
-    def peers_metadata_extension_id(self):
-        return self.payload[b"m"][b"ut_metadata"]
 
 
 class Metadata(Extension): ...
@@ -72,7 +72,7 @@ class Data(Metadata):
         ext_buffer = buffer
         if PeerMessage.is_bitfield(buffer):
             bitfield = BitField.decode(buffer)
-            ext_buffer = buffer[4 + bitfield.length :]
+            ext_buffer = buffer[4 + bitfield.length:]
 
         data = Data()
         data.length = struct.unpack("!I", ext_buffer[:4])[0]

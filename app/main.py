@@ -22,6 +22,7 @@ def main():
         "magnet_parse",
         "magnet_handshake",
         "magnet_info",
+        "magnet_download_piece"
     ]
 
     if command not in commands:
@@ -111,6 +112,29 @@ def main():
                 print(torrent_file)
 
     # ./your_bittorrent.sh magnet_download_piece -o /tmp/test-piece-0 <magnet-link> 0
+    if command == "magnet_download_piece":
+        destination = sys.argv[3]
+        magnet_link = sys.argv[4]
+        piece_nr = int(sys.argv[5])
+
+        magnet = parse_magnet_link(magnet_link)
+        peers = Tracker.get_peers_from_magnet(magnet)
+
+        peer = Peer(peers[random.randint(0, len(peers) - 1)])
+        handshake = peer.shake_hands(
+            sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True
+        )
+        if handshake.supports_extensions:
+            extension_handshake = peer.send_extensions_handshake()
+            peers_metadata_extension_id = (
+                extension_handshake.peers_metadata_extension_id
+            )
+
+            metadata = peer.request_metadata(peers_metadata_extension_id)
+            torrent_file = TorrentFile.from_metadata(magnet, metadata)
+
+            content = download(torrent_file, piece_nr)
+            save_file(destination, content)
 
 
 if __name__ == "__main__":

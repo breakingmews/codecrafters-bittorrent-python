@@ -8,13 +8,13 @@ from bencode import bencode
 
 
 def decode_bencode(bencoded_value):
-    return bencodepy.decode(bencoded_value)
+    bc = bencodepy.Bencode(encoding='utf-8')
+    return bc.decode(bencoded_value)
 
 
 
 def main():
     command = sys.argv[1]
-
 
     if command == "decode":
         bencoded_value = sys.argv[2].encode()

@@ -31,17 +31,13 @@ def main():
 
         # ./your_bittorrent.sh peers sample.torrent
         if command == "peers":
-            peers = get_peers(
-                torrent_file.tracker,
-                torrent_file.sha1_info_hash.hex(),
-                torrent_file.length,
-            )
+            peers = get_peers(torrent_file)
             print("\n".join(peers))
 
         # ./your_bittorrent.sh handshake sample.torrent <peer_ip>:<peer_port>
         if command == "handshake":
             peer = sys.argv[3]
-            handshake: Handshake = do_handshake(peer, torrent_file.sha1_info_hash)
+            handshake: Handshake = do_handshake(peer, torrent_file)
             print(f"Peer ID: {handshake.peer_id}")
 
     # ./your_bittorrent.sh download_piece -o /tmp/test-piece-0 sample.torrent 0

@@ -5,7 +5,7 @@ import bencodepy
 import requests
 
 from app.const import PEER_ID
-from app.dto import Handshake
+from app.dto import Handshake, TorrentFile
 
 
 def url_encode_hash(hash_):
@@ -14,16 +14,16 @@ def url_encode_hash(hash_):
     return hash_encoded
 
 
-def get_peers(tracker, sha1_info_hash_hex, length):
-    sha1_info_hash = url_encode_hash(sha1_info_hash_hex)
+def get_peers(torrent_file: TorrentFile):
+    sha1_info_hash = url_encode_hash(torrent_file.sha1_info_hash.hex())
 
-    url = f"{tracker}?info_hash={sha1_info_hash}"
+    url = f"{torrent_file.tracker}?info_hash={sha1_info_hash}"
     params = {
         "peer_id": PEER_ID,
         "port": 6881,
         "uploaded": 0,
         "downloaded": 0,
-        "left": length,
+        "left": torrent_file.length,
         "compact": 1,
     }
     response = requests.get(url, params)
@@ -45,8 +45,8 @@ def get_address(peer: str):
     return address
 
 
-def do_handshake(peer: str, sha1_info_hash: bytes):
-    handshake = Handshake(sha1_info_hash).encode()
+def do_handshake(peer: str, torrent_file: TorrentFile):
+    handshake = Handshake(torrent_file.sha1_info_hash).encode()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(get_address(peer))
     s.sendall(handshake)

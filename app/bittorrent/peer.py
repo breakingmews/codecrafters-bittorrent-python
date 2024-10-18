@@ -26,7 +26,7 @@ class Peer:
         _log.debug(f"Connected to peer: {self.address}")
 
     def __del__(self):
-        _log.debug("Destroying peer. Closing connection")
+        _log.info("Destroying peer. Closing connection")
         self.socket.close()
 
     @staticmethod

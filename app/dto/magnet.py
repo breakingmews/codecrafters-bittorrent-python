@@ -3,8 +3,6 @@ from dataclasses import dataclass, field
 
 import bencodepy
 
-from app.dto.peer_message import BitField, PeerMessage
-
 
 @dataclass
 class Magnet:
@@ -35,15 +33,11 @@ class Extension:
 
     @staticmethod
     def decode(buffer: bytes):
-        ext_buffer = buffer
-        if PeerMessage.is_bitfield(buffer):
-            bitfield = BitField.decode(buffer)
-            ext_buffer = buffer[4 + bitfield.length :]
         extension = Extension()
-        extension.length = struct.unpack("!I", ext_buffer[:4])[0]
-        extension.id_ = struct.unpack("!B", ext_buffer[4:5])[0]
-        extension.extension_message_id = struct.unpack("!B", ext_buffer[5:6])[0]
-        extension.payload = bencodepy.decode(ext_buffer[6:])
+        extension.length = struct.unpack("!I", buffer[:4])[0]
+        extension.id_ = struct.unpack("!B", buffer[4:5])[0]
+        extension.extension_message_id = struct.unpack("!B", buffer[5:6])[0]
+        extension.payload = bencodepy.decode(buffer[6:])
         return extension
 
     @property
@@ -69,17 +63,12 @@ class Request(Metadata):
 class Data(Metadata):
     @staticmethod
     def decode(buffer: bytes):
-        ext_buffer = buffer
-        if PeerMessage.is_bitfield(buffer):
-            bitfield = BitField.decode(buffer)
-            ext_buffer = buffer[4 + bitfield.length :]
-
         data = Data()
-        data.length = struct.unpack("!I", ext_buffer[:4])[0]
-        data.id_ = struct.unpack("!B", ext_buffer[4:5])[0]
-        data.extension_message_id = struct.unpack("!B", ext_buffer[5:6])[0]
+        data.length = struct.unpack("!I", buffer[:4])[0]
+        data.id_ = struct.unpack("!B", buffer[4:5])[0]
+        data.extension_message_id = struct.unpack("!B", buffer[5:6])[0]
 
-        splitted = ext_buffer[6:].split(b"eed")
+        splitted = buffer[6:].split(b"eed")
         first: dict = bencodepy.decode(splitted[0] + b"ee")
         second: dict = bencodepy.decode(b"d" + splitted[1])
         data.payload = dict((*first.items(), *second.items()))

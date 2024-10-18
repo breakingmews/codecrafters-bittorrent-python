@@ -1,13 +1,6 @@
 import argparse
-import os
 from argparse import Namespace
 from datetime import datetime
-
-
-def valid_path(path):
-    if not os.path.exists(path):
-        raise argparse.ArgumentTypeError(f"'{path}' is not a valid path")
-    return path
 
 
 def default_filename() -> str:
@@ -27,7 +20,7 @@ def parse_args() -> Namespace:
     parser_decode.add_argument("bencoded_value", type=str)
 
     parser_info = subparsers.add_parser("info", help="sample.torrent")
-    parser_info.add_argument("torrent_filepath", type=valid_path)
+    parser_info.add_argument("torrent_filepath", type=str)
 
     parser_peers = subparsers.add_parser("peers", help="sample.torrent")
     parser_peers.add_argument("torrent_filepath", type=str)
@@ -84,7 +77,7 @@ def parse_args() -> Namespace:
         help="-o /tmp/test-piece-0 <magnet-link> 0",
     )
     parser_magnet_download_piece.add_argument(
-        "-o", dest="destination", type=valid_path, default=default_filename()
+        "-o", dest="destination", type=str, default=default_filename()
     )
     parser_magnet_download_piece.add_argument("magnet_link", type=str)
     parser_magnet_download_piece.add_argument("piece_number", type=int)
@@ -94,7 +87,7 @@ def parse_args() -> Namespace:
         help="-o /tmp/test-piece-0 <magnet-link>",
     )
     parser_magnet_download.add_argument(
-        "-o", dest="destination", type=valid_path, default=default_filename()
+        "-o", dest="destination", type=str, default=default_filename()
     )
     parser_magnet_download.add_argument("magnet_link", type=str)
 

@@ -1,4 +1,5 @@
 import json
+import random
 import sys
 
 from app.client import download, parse_magnet_link, save_file
@@ -19,6 +20,7 @@ def main():
         "download_piece",
         "download",
         "magnet_parse",
+        "magnet_handshake",
     ]
 
     if command not in commands:
@@ -49,7 +51,7 @@ def main():
         if command == "handshake":
             peer_address = sys.argv[3]
             peer = Peer(peer_address)
-            handshake = peer.shake_hands(torrent_file)
+            handshake = peer.shake_hands(torrent_file.sha1_info_hash)
             print(f"Peer ID: {handshake.peer_id}")
 
     # ./your_bittorrent.sh download_piece -o /tmp/test-piece-0 sample.torrent 0
@@ -79,6 +81,17 @@ def main():
         magnet = parse_magnet_link(magnet_link)
         print(f"Tracker URL: {magnet.tracker}")
         print(f"Info Hash: {magnet.info_hash}")
+
+    # ./your_bittorrent.sh magnet_handshake magnet:?xt=urn:btih:d69f91e6b2ae4c542468d1073a71d4ea13879a7f&dn=sample.torrent&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce
+    if command == "magnet_handshake":
+        magnet_link = sys.argv[2]
+        magnet = parse_magnet_link(magnet_link)
+        peers = Tracker.get_peers_from_magnet(magnet)
+        print(f"Peers:\n{"\n".join(peers)}")
+
+        peer = Peer(peers[random.randint(0, len(peers) - 1)])
+        handshake = peer.shake_hands(magnet.sha1_info_hash, support_extension=True)
+        print(f"Peer ID: {handshake.peer_id}")
 
 
 if __name__ == "__main__":

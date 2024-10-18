@@ -22,7 +22,7 @@ def download(torrent_file: TorrentFile, piece_nr: int = None):
 
     peer = Peer(peers[random.randint(0, len(peers) - 1)])
     try:
-        peer.shake_hands(torrent_file)
+        peer.shake_hands(torrent_file.sha1_info_hash)
         peer.receive_bitfield()
         peer.send_interested()
 

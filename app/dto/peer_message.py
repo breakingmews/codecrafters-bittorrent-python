@@ -9,16 +9,18 @@ from app.const import PEER_ID
 
 @dataclass
 class Handshake:
+    _buffer: tuple
     sha1_info_hash: bytes
     peer_id: str = PEER_ID
     _length: int = 19
     _protocol: str = "BitTorrent protocol"
-    _buffer: int = 0
 
-    def __init__(self, sha1_info_hash=None, peer_id=None):
+    def __init__(self, sha1_info_hash=None, peer_id=None, support_extension=False):
         self._length: int = 19
         self._protocol: str = "BitTorrent protocol"
-        self._buffer: int = 0
+        self._buffer: tuple = (
+            (0, 0, 0, 0, 0, 16, 0, 0) if support_extension else (0, 0, 0, 0, 0, 0, 0, 0)
+        )
 
         if sha1_info_hash:
             self.sha1_info_hash = sha1_info_hash
@@ -29,7 +31,7 @@ class Handshake:
         encoded = (
             struct.pack("!B", self._length)
             + self._protocol.encode()
-            + struct.pack("!B", self._buffer) * 8
+            + struct.pack("!BBBBBBBB", *self._buffer)
             + self.sha1_info_hash
             + self.peer_id.encode()
         )

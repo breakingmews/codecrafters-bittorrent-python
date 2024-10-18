@@ -56,19 +56,23 @@ class TestMain(unittest.TestCase):
         with open("itsworking.torrent", "wb") as f:
             f.write(content)
 
-    def test_read_torrent_file(self):
-        filepath = "test.torrent"
-        file = TorrentFile(filepath)
-        self.assertEqual(dict, type(file.content))
-
     def test_decode_torrent_file(self):
         # arrange
         filepath = "test.torrent"
 
         # act
         file = TorrentFile(filepath)
+        info_hash = "1cad4a486798d952614c394eb15e75bec587fd08"
+        sha1_info_hash = b"\x1c\xadJHg\x98\xd9RaL9N\xb1^u\xbe\xc5\x87\xfd\x08"
 
         # assert
+        self.assertEqual(dict, type(file.content))
+
+        expected_info_hash = (
+            b"\xc7x)\xd2\xa7}e\x16\xf8\x8c\xd7\xa3\xde\x1a&\xab\xcb\xfa\xb0\xdb"
+        )
+        self.assertEqual(expected_info_hash, file.sha1_info_hash)
+
         expected_piece_sizes = 11 * [262144] + [110536]
         expected_hashes = [
             "3c34309faebf01e49c0f63c90b7edcc2259b6ad0",

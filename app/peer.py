@@ -71,8 +71,10 @@ class Peer:
 
         return block
 
-    def shake_hands(self, torrent_file: TorrentFile) -> Handshake:
-        handshake = Handshake(torrent_file.sha1_info_hash)
+    def shake_hands(self, sha1_info_hash: str, support_extension=False) -> Handshake:
+        handshake = Handshake(
+            sha1_info_hash=sha1_info_hash, support_extension=support_extension
+        )
         # print(f"Handshake: {handshake}")
         response = self.send(handshake.encode(), 68)
         # print(f"\nHandshake response length: {len(response)}")

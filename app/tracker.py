@@ -4,21 +4,28 @@ import bencodepy
 import requests
 
 from app.const import PEER_ID
+from app.dto.magnet import Magnet
 from app.dto.torrent_file import TorrentFile
 
 
 class Tracker:
     @staticmethod
     def get_peers(torrent_file: TorrentFile) -> [str]:
-        sha1_info_hash = Tracker._url_encode_hash(torrent_file.sha1_info_hash.hex())
+        tracker = torrent_file.tracker
+        info_hash = torrent_file.sha1_info_hash.hex()
+        left = torrent_file.length
+        return Tracker._get_peers(tracker, info_hash, left)
 
-        url = f"{torrent_file.tracker}?info_hash={sha1_info_hash}"
+    @staticmethod
+    def _get_peers(tracker: str, info_hash: str, left: int = 1024):
+        sha1_info_hash = Tracker._url_encode_hash(info_hash)
+        url = f"{tracker}?info_hash={sha1_info_hash}"
         params = {
             "peer_id": PEER_ID,
             "port": 6881,
             "uploaded": 0,
             "downloaded": 0,
-            "left": torrent_file.length,
+            "left": left,
             "compact": 1,
         }
         response = requests.get(url, params)
@@ -32,6 +39,10 @@ class Tracker:
             peers.append(ip + ":" + port)
             start += 6
         return peers
+
+    @staticmethod
+    def get_peers_from_magnet(magnet: Magnet):
+        return Tracker._get_peers(magnet.tracker, magnet.info_hash)
 
     @staticmethod
     def _url_encode_hash(hash_):

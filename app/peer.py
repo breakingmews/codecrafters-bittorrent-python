@@ -5,9 +5,8 @@ from app.dto.peer_message import (
     BitField,
     Handshake,
     Interested,
-    Piece,
     Request,
-    Unchoke,
+    Unchoke, PeerMessage,
 )
 from app.dto.torrent_file import TorrentFile
 
@@ -30,16 +29,36 @@ class Peer:
         self.socket.sendall(buffer)
         return self.socket.recv(size)
 
+    def wait(self, message_type: any, size=1024) -> bytes:
+        print(f"Wait for {message_type}")
+
+        response = self.socket.recv(size)
+        print(f"Received: {response}")
+        is_keep_alive = PeerMessage.is_keep_alive(response)
+        expected_message_type = False if is_keep_alive else PeerMessage.decode(response).id_ == message_type.id_
+        wait_next = is_keep_alive or not expected_message_type
+        if wait_next:
+            self.wait(message_type, size)
+        return response
+
     def shake_hands(self, torrent_file: TorrentFile) -> Tuple[Handshake, BitField]:
         handshake = Handshake(torrent_file.sha1_info_hash)
         print(f"Handshake: {handshake}")
-        response = self.send(handshake.encode(), 75)
+        response = self.send(handshake.encode())
         print(f"\nHandshake response length: {len(response)}")
         print(f"\nHandshake response: {response}")
 
         decoded: Handshake = Handshake.decode(response[:68])
         print(f"\nHandshake decoded: {decoded}")
 
+        """
+        if len(response) == 75:
+            bitfield: BitField = BitField.decode(response[68:])
+            if bitfield.id_ != BitField.id_:
+                bitfield = BitField.decode(self.wait(BitField))
+        else:
+            bitfield = BitField.decode(self.wait(BitField))
+        """
         bitfield: BitField = BitField.decode(response[68:])
         print(f"\nBitfield decoded: {bitfield}")
 
@@ -51,9 +70,13 @@ class Peer:
         unchoke = Unchoke.decode(response)
         return unchoke
 
-    def request_piece(self, torrent_file: TorrentFile, piece_nr: int) -> Piece:
-        request = Request(0, 0, torrent_file.length).encode()
-        response = self.send(request, torrent_file.length)
-        print(f"Response piece: {response}")
-        piece = Piece.decode(response)
-        return piece
+    def request_piece(self, torrent_file: TorrentFile, piece_nr: int) -> list:
+        blocks = []
+        for block in torrent_file.pieces[piece_nr].blocks:
+            print(f"{block}")
+            request = Request(block.ix, block.offset, block.size).encode()
+            response = self.send(request)
+            print(f"Response piece: {response}")
+            blocks.append(response)
+
+        return blocks

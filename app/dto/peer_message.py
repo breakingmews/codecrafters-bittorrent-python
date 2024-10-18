@@ -57,6 +57,10 @@ class PeerMessage:
         decoded = PeerMessage(length, id_)
         return decoded
 
+    @staticmethod
+    def is_keep_alive(buffer) -> bool:
+        return len(buffer) == 0
+
 
 @dataclass
 class BitField(PeerMessage):
@@ -68,7 +72,7 @@ class BitField(PeerMessage):
         if len(buffer) == 0:
             print('Warning: empty bitfield')
             return
-        
+
         length, id_, payload = struct.unpack("!IBH", buffer)
         bitfield = BitField(length, id_, payload)
         return bitfield
@@ -124,4 +128,4 @@ class Piece(PeerMessage):
     id_ = 7
     index: int  # 4 bytes
     begin: int  # 4 bytes
-    block: str
+    block: bytes

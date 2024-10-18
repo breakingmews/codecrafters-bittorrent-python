@@ -1,67 +1,116 @@
 import hashlib
+from dataclasses import dataclass
 from typing import List
 
 import bencodepy
 
 
+@dataclass
+class Block:
+    ix: int
+    offset: int
+    size: int
+
+
+class Piece:
+    _block_size: int = 16384  # 16 * 1024 bytes
+
+    ix: int
+    hash_: str
+    size: int
+    blocks: List[Block] = []
+
+    def __init__(self, ix: int, hash_: str, size):
+        self.ix = ix
+        self.hash_ = hash_
+        self.size = size
+        self.blocks = self._calculate_blocks()
+
+    def _calculate_blocks(self):
+        blocks_count = self.size / self._block_size
+
+        if blocks_count.is_integer():
+            block_sizes = int(blocks_count) * [self._block_size]
+        else:
+            blocks_count = int(round(blocks_count))
+            last_block_size = self.size - (blocks_count - 1) * self._block_size
+            block_sizes = (blocks_count - 1) * [self._block_size] + [last_block_size]
+
+        blocks = []
+        for i in range(len(block_sizes)):
+            block = Block(i, i * self._block_size, block_sizes[i])
+            blocks.append(block)
+
+        return blocks
+
+
 class TorrentFile:
     content: bytes
-    tracker: str
-    info: dict
-    length: int
-    piece_length: int
-    sha1_info_hash: bytes
-    piece_hashes: List[str] = []
-    _piece_sizes: List[int] = []
+    pieces: List[Piece]
 
-    @staticmethod
-    def read(filepath: str) -> "TorrentFile":
+    def __init__(self, filepath: str):
         bc = bencodepy.Bencode()
         content = bc.read(filepath)
         print(f"Torrent filepath: {filepath}")
         print(f"Torrent file content: {content}")
 
-        file = TorrentFile()
-        file.content = content
-        return file
+        self.content = content
+        self.pieces = self._parse_pieces()
 
-    def decode(self) -> "TorrentFile":
-        self.tracker = self.content[b"announce"].decode()
-        self.info = self.content[b"info"]
-        self.length = self.info[b"length"]
-        self.sha1_info_hash = hashlib.sha1(bencodepy.encode(self.info)).digest()
-        self.piece_hashes = self._parse_hashes()
-        self.piece_length = self.info[b"piece length"]
-        self._piece_sizes = self._calculate_piece_sizes()
-        return self
+    @property
+    def tracker(self):
+        return self.content[b"announce"].decode()
+
+    @property
+    def info(self):
+        return self.content[b"info"]
+
+    @property
+    def length(self):
+        return self.info[b"length"]
+
+    @property
+    def piece_length(self):
+        return self.info[b"piece length"]
+
+    @property
+    def sha1_info_hash(self):
+        return hashlib.sha1(bencodepy.encode(self.info)).digest()
 
     def __repr__(self):
         return (
-            f"Tracker URL: {self.tracker}\n"
-            + f"Length: {self.length}\n"
-            + f"Info Hash: {self.sha1_info_hash.hex()}\n"
-            + f"Piece Length: {self.info[b"piece length"]}\n"
-            + f"Piece Hashes:\n{"\n".join(self.piece_hashes)}"
+                f"Tracker URL: {self.tracker}\n"
+                + f"Length: {self.length}\n"
+                + f"Info Hash: {self.sha1_info_hash.hex()}\n"
+                + f"Piece Length: {self.piece_length}\n"
+                + f"Piece Hashes:\n{"\n".join(piece.hash_ for piece in self.pieces)}"
         )
 
-    def _parse_hashes(self) -> [str]:
-        pieces: bytes = self.info[b"pieces"]
+    def _parse_pieces(self) -> [str]:
+        pieces_bytes: bytes = self.info[b"pieces"]
         hash_length = 20
         hashes = []
         start = 0
-        while start < len(pieces) + hash_length:
-            hash_ = pieces[start : start + hash_length].hex()
+        while start < len(pieces_bytes) + hash_length:
+            hash_ = pieces_bytes[start: start + hash_length].hex()
             if hash_:
                 hashes.append(hash_)
             start += hash_length
-        return hashes
 
-    def _calculate_piece_sizes(self):
-        pieces_count = len(self.piece_hashes)
+        pieces = []
+        piece_sizes = TorrentFile._calculate_piece_sizes(self.length, self.piece_length, hashes)
+        for i in range(len(hashes)):
+            piece = Piece(i, hashes[i], piece_sizes[i])
+            pieces.append(piece)
 
-        if self.length % self.piece_length == 0:
-            self._piece_sizes = self.piece_length * [pieces_count]
-            return
+        return pieces
 
-        last_piece_size = self.length - (pieces_count - 1) * self.piece_length
-        self._piece_sizes = (pieces_count - 1) * [self.piece_length] + [last_piece_size]
+    @staticmethod
+    def _calculate_piece_sizes(length, piece_length, piece_hashes):
+        pieces_count = len(piece_hashes)
+
+        if length % piece_length == 0:
+            return piece_length * [pieces_count]
+
+        last_piece_size = length - (pieces_count - 1) * piece_length
+        return (pieces_count - 1) * [piece_length] + [last_piece_size]

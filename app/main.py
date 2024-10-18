@@ -9,8 +9,15 @@ from app.peer import Peer
 from app.tracker import Tracker
 
 
+def save_piece(destination: str, piece_block: bytes):
+    with open(destination, "wb") as f:
+        f.write(piece_block)
+    print(f"Wrote piece block to {destination}")
+
+
 def download_piece(destination: str, torrent_filepath: str, piece_nr: int):
-    torrent_file = TorrentFile.read(torrent_filepath).decode()
+    print(f"{destination}, {torrent_filepath}, {piece_nr}")
+    torrent_file = TorrentFile(torrent_filepath)
     print(f"\n{torrent_file}")
 
     peers = Tracker.get_peers(torrent_file)
@@ -24,11 +31,12 @@ def download_piece(destination: str, torrent_filepath: str, piece_nr: int):
         unchoke = peer.interested()
         print(f"Unchoke: {unchoke}")
 
-        piece = peer.request_piece(torrent_file, piece_nr)
-        print(f"Piece: {piece}")
+        blocks = peer.request_piece(torrent_file, piece_nr)
+        print(f"Piece: {blocks}")
+
+        save_piece(destination, b"\n".join(blocks))
     except Exception:
-        print(f"Closing connection: {traceback.format_exc()}")
-        peer.socket.close()
+        print(f"Error: {traceback.format_exc()}")
     finally:
         print("Closing connection")
         peer.socket.close()
@@ -51,7 +59,7 @@ def main():
 
     if command in ("info", "peers", "handshake"):
         filepath = sys.argv[2]
-        torrent_file = TorrentFile.read(filepath).decode()
+        torrent_file = TorrentFile(filepath)
         print(torrent_file)
 
         # ./your_bittorrent.sh info sample.torrent
@@ -76,8 +84,7 @@ def main():
         filepath = sys.argv[4]
         piece_nr = int(sys.argv[5])
 
-        # download_piece(destination, filepath, piece_nr)
-        raise NotImplementedError("download_piece not implemented")
+        download_piece(destination, filepath, piece_nr)
 
 
 if __name__ == "__main__":

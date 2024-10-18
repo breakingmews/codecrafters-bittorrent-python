@@ -22,6 +22,10 @@ _log = logging.getLogger(__name__)
 
 def main():
     args = parse_args()
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG if args.verbose else logging.INFO)
+
     command = args.command
 
     match command:

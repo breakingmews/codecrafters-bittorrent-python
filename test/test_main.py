@@ -1,6 +1,12 @@
 import unittest
 
-from app.main import decode_value, decode_file, parse_hashes, encode_hash
+from app.client import get_address, url_encode_hash
+from app.main import (
+    Handshake,
+    decode_file,
+    decode_value,
+    parse_hashes,
+)
 
 
 class TestMain(unittest.TestCase):
@@ -56,9 +62,30 @@ class TestMain(unittest.TestCase):
     def test_encode_hash(self):
         hash_ = "d69f91e6b2ae4c542468d1073a71d4ea13879a7f"
         expected = "%d6%9f%91%e6%b2%ae%4c%54%24%68%d1%07%3a%71%d4%ea%13%87%9a%7f"
-        encoded = encode_hash(hash_)
+        encoded = url_encode_hash(hash_)
         self.assertEqual(expected, encoded)
 
+    def test_encode_handshake(self):
+        sha1_info_hash = b"c7e51462e85d8631c25f8c9b8c5479345a1de26b"
+        encoded = Handshake(sha1_info_hash).encode()
+        expected = b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00c7e51462e85d8631c25f8c9b8c5479345a1de26b00112233445566777777"
+        self.assertEqual(expected, encoded)
 
-if __name__ == '__main__':
+    def test_decode_handshake(self):
+        buffer = b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00\xc7\xe5\x14b\xe8]\x861\xc2_\x8c\x9b\x8cTy4Z\x1d\xe2k\xb8/Qc{\xf2\xd2\x1f\xd8,*\x82Z69\xb0a\x9eH\xb8"
+        decoded = Handshake.decode(buffer)
+        expected = Handshake(
+            sha1_info_hash="c7e51462e85d8631c25f8c9b8c5479345a1de26b",
+            peer_id="b82f51637bf2d21fd82c2a825a3639b0619e48b8",
+        )
+        self.assertEqual(expected, decoded)
+
+    def test_get_address(self):
+        peer = "127.0.0.1:43759"
+        address = get_address(peer)
+        expected = ("127.0.0.1", 43759)
+        self.assertEqual(expected, address)
+
+
+if __name__ == "__main__":
     unittest.main()

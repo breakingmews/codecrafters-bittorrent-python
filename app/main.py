@@ -1,27 +1,12 @@
 import hashlib
 import json
-import struct
 import sys
 
 import bencodepy
-import requests
 
-
-def decode_value(bencoded_value):
-    bc = bencodepy.Bencode(encoding="utf-8")
-    return bc.decode(bencoded_value)
-
-
-def decode_file(filepath: str):
-    bc = bencodepy.Bencode()
-    content = bc.read(filepath)
-    print(content)
-    return content
-
-
-def calculate_hash(info):
-    encoded = bencodepy.encode(info)
-    return hashlib.sha1(encoded).hexdigest()
+from app.client import do_handshake, get_peers
+from app.codec import decode_file, decode_value
+from app.dto import Handshake
 
 
 def parse_hashes(info):
@@ -30,46 +15,16 @@ def parse_hashes(info):
     hashes = []
     start = 0
     while start < len(pieces) + hash_length:
-        hash_ = pieces[start: start + hash_length].hex()
+        hash_ = pieces[start : start + hash_length].hex()
         hashes.append(hash_)
         start += hash_length
     return "\n".join(hashes)
 
 
-def encode_hash(hash_):
-    parts = [hash_[i:i + 2] for i in range(0, 40, 2)]
-    hash_encoded = "".join(["%" + p for p in parts])
-    return hash_encoded
-
-
-def get_peers(tracker, info, length):
-    encoded_hash = encode_hash(calculate_hash(info))
-    url = f"{tracker}?info_hash={encoded_hash}"
-    params = {
-        "peer_id": "00112233445566777777",
-        "port": 6881,
-        "uploaded": 0,
-        "downloaded": 0,
-        "left": length,
-        "compact": 1,
-    }
-    response = requests.get(url, params)
-    decoded = bencodepy.decode(response.content)[b"peers"]
-    peers = []
-    start = 0
-    while start < len(decoded):
-        peer = decoded[start: start + 6]
-        ip = ".".join(str(p) for p in list(peer[0:4]))
-        port = str(struct.unpack("!H", bytes(peer[4:]))[0])
-        peers.append(ip + ":" + port)
-        start += 6
-    return peers
-
-
 def main():
     command = sys.argv[1]
     arg = sys.argv[2]
-    commands = ["decode", "info", "peers"]
+    commands = ["decode", "info", "peers", "handshake"]
 
     if command not in commands:
         raise NotImplementedError(f"Unknown command {command}")
@@ -82,16 +37,17 @@ def main():
 
     filepath = arg
     decoded: dict = decode_file(filepath)
-    print(decoded)
+
     tracker = decoded[b"announce"].decode()
     info = decoded[b"info"]
     length = info[b"length"]
-    hash_ = hashlib.sha1(bencodepy.encode(info)).digest().hex()
+    sha1_info_hash: bytes = hashlib.sha1(bencodepy.encode(info)).digest()
+    sha1_info_hash_hex = sha1_info_hash.hex()
     piece_hashes = parse_hashes(info)
 
     print(f"Tracker URL: {tracker}")
     print(f"Length: {length}")
-    print(f"Info Hash: {hash_}")
+    print(f"Info Hash: {sha1_info_hash_hex}")
     print(f"Piece Length: {info[b"piece length"]}")
     print(f"Piece Hashes:\n{piece_hashes}")
 
@@ -99,8 +55,13 @@ def main():
         return
 
     if command == "peers":
-        peers = get_peers(tracker, info, length)
+        peers = get_peers(tracker, sha1_info_hash_hex, length)
         print("\n".join(peers))
+
+    if command == "handshake":
+        peer = sys.argv[3]
+        handshake: Handshake = do_handshake(peer, sha1_info_hash)
+        print(f"Peer ID: {handshake.peer_id}")
 
 
 if __name__ == "__main__":

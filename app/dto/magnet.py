@@ -52,6 +52,10 @@ class ExtensionHandshake(Extension):
     def __init__(self):
         self.payload = {"m": {"ut_metadata": 16}}
 
+    @property
+    def peers_metadata_extension_id(self):
+        return self.payload[b"m"][b"ut_metadata"]
+
 
 class Metadata(Extension): ...
 

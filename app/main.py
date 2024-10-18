@@ -96,9 +96,9 @@ def main():
 
         if handshake.supports_extensions:
             extension_handshake = peer.send_extensions_handshake()
-            peers_metadata_extension_id = extension_handshake.payload[b"m"][
-                b"ut_metadata"
-            ]
+            peers_metadata_extension_id = (
+                extension_handshake.peers_metadata_extension_id
+            )
             # print(f"Extension handshake: {extension_handshake}")
             if command == "magnet_handshake":
                 print(f"Peer Metadata Extension ID: {peers_metadata_extension_id}")
@@ -109,6 +109,8 @@ def main():
                 metadata = peer.request_metadata(peers_metadata_extension_id)
                 torrent_file = TorrentFile.from_metadata(magnet, metadata)
                 print(torrent_file)
+
+    # ./your_bittorrent.sh magnet_download_piece -o /tmp/test-piece-0 <magnet-link> 0
 
 
 if __name__ == "__main__":

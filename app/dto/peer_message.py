@@ -1,3 +1,4 @@
+import logging
 import struct
 from dataclasses import dataclass
 from typing import Any
@@ -5,6 +6,8 @@ from typing import Any
 import bitstruct
 
 from app.const import PEER_ID
+
+_log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -31,11 +34,11 @@ class Handshake:
 
     def encode(self):
         encoded = (
-            struct.pack("!B", self._length)
-            + self._protocol.encode()
-            + struct.pack("!BBBBBBBB", *self.buffer)
-            + self.sha1_info_hash
-            + self.peer_id.encode()
+                struct.pack("!B", self._length)
+                + self._protocol.encode()
+                + struct.pack("!BBBBBBBB", *self.buffer)
+                + self.sha1_info_hash
+                + self.peer_id.encode()
         )
         return encoded
 
@@ -68,7 +71,7 @@ class PeerMessage:
         length, id_ = struct.unpack("!IB", buffer[:5])
         payload = buffer[5:]
         decoded = PeerMessage(id_=id_, length=length, payload=payload)
-        # print(f"Decoded PeerMessage: {decoded}")
+        _log.debug(f"Decoded PeerMessage: {decoded}")
         return decoded
 
     @staticmethod
@@ -86,15 +89,15 @@ class BitField(PeerMessage):
 
     @staticmethod
     def decode(buffer: bytes):
-        # print(f"Decoding BitField: {buffer}")
+        _log.debug(f"Decoding BitField: {buffer}")
         if len(buffer) == 0:
-            print("Warning: empty bitfield")
+            _log.warning("Warning: empty bitfield")
             return
 
         length, id_ = struct.unpack("!IB", buffer[:5])
-        payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5 : 5 + length])
+        payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5: 5 + length])
         bitfield = BitField(id_=id_, length=length, payload=payload)
-        # print(f"Bitfield decoded: {bitfield}")
+        _log.debug(f"Bitfield decoded: {bitfield}")
         return bitfield
 
 
@@ -117,7 +120,7 @@ class Unchoke(PeerMessage):
     def decode(buffer: bytes):
         length, id_ = struct.unpack("!IB", buffer)
         decoded = Unchoke(id_=id_, length=length)
-        # print(f"Decoded Unchoke: {decoded}")
+        _log.debug(f"Decoded Unchoke: {decoded}")
         return decoded
 
 
@@ -173,5 +176,5 @@ class Piece(PeerMessage):
         length, id_, index, begin = struct.unpack("!IBII", buffer[:13])
         payload = buffer[13:]
         piece = Piece(length=length, id_=id_, index=index, begin=begin, payload=payload)
-        # print(f"Decoded Piece: {piece}")
+        _log.debug(f"Decoded Piece: {piece}")
         return piece

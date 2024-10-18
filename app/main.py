@@ -1,12 +1,17 @@
 import json
+import logging
 import random
 import sys
 
 from app.client import download, parse_magnet_link, save_file
 from app.codec import decode_value
+from app.config import log_config
 from app.dto.torrent_file import TorrentFile
 from app.peer import Peer
 from app.tracker import Tracker
+
+logging.basicConfig(**log_config)
+_log = logging.getLogger(__name__)
 
 
 def main():
@@ -100,16 +105,16 @@ def main():
             peers_metadata_extension_id = (
                 extension_handshake.peers_metadata_extension_id
             )
-            # print(f"Extension handshake: {extension_handshake}")
+            _log.debug(f"Extension handshake: {extension_handshake}")
             if command == "magnet_handshake":
                 print(f"Peer Metadata Extension ID: {peers_metadata_extension_id}")
                 print(f"Peer ID: {handshake.peer_id}")
-                print(f"Peers:\n{"\n".join(peers)}")
+                _log.info(f"Peers:\n{"\n".join(peers)}")
 
             if command == "magnet_info":
                 metadata = peer.request_metadata(peers_metadata_extension_id)
                 torrent_file = TorrentFile.from_metadata(magnet, metadata)
-                print(torrent_file)
+                _log.info(torrent_file)
 
     # ./your_bittorrent.sh magnet_download_piece -o /tmp/test-piece-0 <magnet-link> 0
     if command == "magnet_download_piece":

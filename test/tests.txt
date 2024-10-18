@@ -1,0 +1,375 @@
+[tester::#DV7] Running tests for Stage #DV7 (Magnet Links - Download the whole file)
+[tester::#DV7] Running ./your_bittorrent.sh magnet_download -o /tmp/torrents878044639/magnet2.gif "magnet:?xt=urn:btih:3f994a835e090238873498636b98a3e78d1c34ca&dn=magnet2.gif&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce"
+[your_program] Wrote file to /tmp/torrents878044639/magnet2.gif - 79752 bytes
+[your_program] Destroying peer. Closing connection
+[tester::#DV7] ✓ File size is correct.
+[tester::#DV7] ✓ File SHA-1 is correct.
+[tester::#DV7] Test passed.
+
+[tester::#QV6] Running tests for Stage #QV6 (Magnet Links - Download a piece)
+[tester::#QV6] Running ./your_bittorrent.sh magnet_download_piece -o /tmp/torrents1099315585/piece-0 "magnet:?xt=urn:btih:c5fb9894bdaba464811b088d806bdd611ba490af&dn=magnet3.gif&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce" 0
+[your_program] Wrote file to /tmp/torrents1099315585/piece-0 - 262144 bytes
+[your_program] Destroying peer. Closing connection
+[tester::#QV6] ✓ Piece size is correct.
+[tester::#QV6] ✓ Piece SHA-1 is correct.
+[tester::#QV6] Running ./your_bittorrent.sh magnet_download_piece -o /tmp/torrents1099315585/piece-2 "magnet:?xt=urn:btih:c5fb9894bdaba464811b088d806bdd611ba490af&dn=magnet3.gif&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce" 2
+[your_program] Wrote file to /tmp/torrents1099315585/piece-2 - 105656 bytes
+[your_program] Destroying peer. Closing connection
+[tester::#QV6] ✓ Piece size is correct.
+[tester::#QV6] ✓ Piece SHA-1 is correct.
+[tester::#QV6] Test passed.
+
+[tester::#ZH1] Running tests for Stage #ZH1 (Magnet Links - Receive metadata)
+[tester::#ZH1] Running ./your_bittorrent.sh magnet_info "magnet:?xt=urn:btih:c5fb9894bdaba464811b088d806bdd611ba490af&dn=magnet3.gif&tr=http%3A%2F%2F127.0.0.1:38613%2Fannounce"
+[tester::#ZH1] Tracker started on address 127.0.0.1:38613...
+[tester::#ZH1]
+[tester::#ZH1] Peer listening on address: 127.0.0.1:44125
+[tester::#ZH1] Waiting to receive handshake message
+[tester::#ZH1] Received handshake: [infohash: c5fb9894bdaba464811b088d806bdd611ba490af, peer_id: 3030313132323333343435353636373737373737]
+[tester::#ZH1]
+[tester::#ZH1] Sending back handshake with peer_id: 935edcc7de5145ba5db3b778ac9fb0c27343022a
+[tester::#ZH1] Sending bitfield message
+[tester::#ZH1] Sending extension handshake
+[tester::#ZH1] Waiting to receive extension handshake message
+[tester::#ZH1] Received extension handshake with payload: d1:md11:ut_metadatai16eee
+[tester::#ZH1] Checking metadata extension id received
+[tester::#ZH1] Waiting to receive metadata request
+[tester::#ZH1] Received payload: �d8:msg_typei0e5:piecei0ee
+[tester::#ZH1] Sending metadata response
+[your_program] Tracker URL: http://127.0.0.1:38613/announce
+[your_program] Length: 629944
+[your_program] Info Hash: c5fb9894bdaba464811b088d806bdd611ba490af
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] ca80fd83ffb34d6e1bbd26a8ef6d305827f1cd0a
+[your_program] 707fd7c657f6d636f0583466c3cfe134ddb2c08a
+[your_program] 47076d104d214c0052960ef767262649a8af0ea8
+[your_program] Destroying peer. Closing connection
+[tester::#ZH1] ✓ Tracker URL is correct.
+[tester::#ZH1] ✓ Length is correct.
+[tester::#ZH1] ✓ Info Hash is correct.
+[tester::#ZH1] ✓ Piece Length is correct.
+[tester::#ZH1] ✓ Piece Hashes are correct.
+[tester::#ZH1] Test passed.
+
+[tester::#NS5] Running tests for Stage #NS5 (Magnet Links - Request metadata)
+[tester::#NS5] Running ./your_bittorrent.sh magnet_info "magnet:?xt=urn:btih:ad42ce8109f54c99613ce38f9b4d87e70f24a165&dn=magnet1.gif&tr=http%3A%2F%2F127.0.0.1:46267%2Fannounce"
+[tester::#NS5] Peer listening on address: 127.0.0.1:44571
+[tester::#NS5] Tracker started on address 127.0.0.1:46267...
+[tester::#NS5]
+[tester::#NS5] Waiting to receive handshake message
+[tester::#NS5] Received handshake: [infohash: ad42ce8109f54c99613ce38f9b4d87e70f24a165, peer_id: 3030313132323333343435353636373737373737]
+[tester::#NS5]
+[tester::#NS5] Sending back handshake with peer_id: 0258bdc036b4f09ee51505f52fb729cd3ada4f8d
+[tester::#NS5] Sending bitfield message
+[tester::#NS5] Sending extension handshake
+[tester::#NS5] Waiting to receive extension handshake message
+[tester::#NS5] Received extension handshake with payload: d1:md11:ut_metadatai16eee
+[tester::#NS5] Checking metadata extension id received
+[tester::#NS5] Waiting to receive metadata request
+[tester::#NS5] Received payload: ~d8:msg_typei0e5:piecei0ee
+[tester::#NS5] Sending metadata response
+[your_program] Tracker URL: http://127.0.0.1:46267/announce
+[your_program] Length: 636505
+[your_program] Info Hash: ad42ce8109f54c99613ce38f9b4d87e70f24a165
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] 3b46a96d9bc3716d1b75da91e6d753a793ad1cef
+[your_program] eda417cb5c1cdbf841125c412da0bec9db8301f3
+[your_program] 422f45b1052e2d45da3e2a6516e1bb1f1db00733
+[your_program] Destroying peer. Closing connection
+[tester::#NS5] Test passed.
+
+[tester::#JK6] Running tests for Stage #JK6 (Magnet Links - Receive extension handshake)
+[tester::#JK6] Running ./your_bittorrent.sh magnet_handshake "magnet:?xt=urn:btih:c5fb9894bdaba464811b088d806bdd611ba490af&dn=magnet3.gif&tr=http%3A%2F%2F127.0.0.1:45081%2Fannounce"
+[tester::#JK6] Tracker started on address 127.0.0.1:45081...
+[tester::#JK6]
+[tester::#JK6] Peer listening on address: 127.0.0.1:32867
+[tester::#JK6] Waiting to receive handshake message
+[tester::#JK6] Received handshake: [infohash: c5fb9894bdaba464811b088d806bdd611ba490af, peer_id: 3030313132323333343435353636373737373737]
+[tester::#JK6]
+[tester::#JK6] Sending back handshake with peer_id: 32e99f106bd042241ee0b9dffc187ca24615e9e3
+[tester::#JK6] Sending bitfield message
+[tester::#JK6] Sending extension handshake
+[tester::#JK6] Waiting to receive extension handshake message
+[tester::#JK6] Received extension handshake with payload: d1:md11:ut_metadatai16eee
+[tester::#JK6] Checking metadata extension id received
+[your_program] Peer Metadata Extension ID: 35
+[your_program] Peer ID: 32e99f106bd042241ee0b9dffc187ca24615e9e3
+[your_program] Peers:
+[your_program] 127.0.0.1:32867
+[your_program] Destroying peer. Closing connection
+[tester::#JK6] ✓ Peer ID is correct.
+[tester::#JK6] ✓ Peer Metadata Extension ID is correct.
+[tester::#JK6] Test passed.
+
+[tester::#XI4] Running tests for Stage #XI4 (Magnet Links - Send extension handshake)
+[tester::#XI4] Running ./your_bittorrent.sh magnet_handshake "magnet:?xt=urn:btih:3f994a835e090238873498636b98a3e78d1c34ca&dn=magnet2.gif&tr=http%3A%2F%2F127.0.0.1:46821%2Fannounce"
+[tester::#XI4] Tracker started on address 127.0.0.1:46821...
+[tester::#XI4]
+[tester::#XI4] Peer listening on address: 127.0.0.1:46603
+[tester::#XI4] Waiting to receive handshake message
+[tester::#XI4] Received handshake: [infohash: 3f994a835e090238873498636b98a3e78d1c34ca, peer_id: 3030313132323333343435353636373737373737]
+[tester::#XI4]
+[tester::#XI4] Sending back handshake with peer_id: d83bd4735cdfd856c997017471421ef81b1d66a4
+[tester::#XI4] Sending bitfield message
+[tester::#XI4] Sending extension handshake
+[tester::#XI4] Waiting to receive extension handshake message
+[tester::#XI4] Received extension handshake with payload: d1:md11:ut_metadatai16eee
+[tester::#XI4] Checking metadata extension id received
+[your_program] Peer Metadata Extension ID: 119
+[your_program] Peer ID: d83bd4735cdfd856c997017471421ef81b1d66a4
+[your_program] Peers:
+[your_program] 127.0.0.1:46603
+[your_program] Destroying peer. Closing connection
+[tester::#XI4] Test passed.
+
+[tester::#PK2] Running tests for Stage #PK2 (Magnet Links - Announce extension support)
+[tester::#PK2] Running ./your_bittorrent.sh magnet_handshake "magnet:?xt=urn:btih:c5fb9894bdaba464811b088d806bdd611ba490af&dn=magnet3.gif&tr=http%3A%2F%2F127.0.0.1:40275%2Fannounce"
+[tester::#PK2] Tracker started on address 127.0.0.1:40275...
+[tester::#PK2]
+[tester::#PK2] Peer listening on address: 127.0.0.1:38351
+[tester::#PK2] Waiting to receive handshake message
+[tester::#PK2] Received handshake: [infohash: c5fb9894bdaba464811b088d806bdd611ba490af, peer_id: 3030313132323333343435353636373737373737]
+[tester::#PK2]
+[tester::#PK2] Sending back handshake with peer_id: 46fd9813e2b418472180a11b40a6fd83d0f2850a
+[tester::#PK2] Sending bitfield message
+[tester::#PK2] Sending extension handshake
+[tester::#PK2] Closing connection
+[your_program] Peer Metadata Extension ID: 121
+[your_program] Peer ID: 46fd9813e2b418472180a11b40a6fd83d0f2850a
+[your_program] Peers:
+[your_program] 127.0.0.1:38351
+[your_program] Destroying peer. Closing connection
+[tester::#PK2] Test passed.
+
+[tester::#HW0] Running tests for Stage #HW0 (Magnet Links - Parse magnet link)
+[tester::#HW0] Running ./your_bittorrent.sh magnet_parse "magnet:?xt=urn:btih:c5fb9894bdaba464811b088d806bdd611ba490af&dn=magnet3.gif&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce"
+[your_program] Tracker URL: http://bittorrent-test-tracker.codecrafters.io/announce
+[your_program] Info Hash: c5fb9894bdaba464811b088d806bdd611ba490af
+[tester::#HW0] ✓ Info Hash is correct.
+[tester::#HW0] ✓ Tracker URL is correct.
+[tester::#HW0] Test passed.
+
+[tester::#JV8] Running tests for Stage #JV8 (Download the whole file)
+[tester::#JV8] Running ./your_bittorrent.sh download -o /tmp/torrents4015775864/congratulations.gif /tmp/torrents4015775864/congratulations.gif.torrent
+[your_program] Torrent filepath: /tmp/torrents4015775864/congratulations.gif.torrent
+[your_program] Torrent file content: {b'announce': b'http://bittorrent-test-tracker.codecrafters.io/announce', b'created by': b'mktorrent 1.1', b'info': {b'length': 820892, b'name': b'congratulations.gif', b'piece length': 262144, b'pieces': b'=B\xa2\x0e\xdb\x1c\xf8@\xcd5(\xd3\xa9\xe9!\xdbc8\xa4ci\xf8\x85\xb3\x98\x8aR\xff\xb05\x91\x98T\x02\xb6\xd5(Y@\xabv\x86\x9el\x9c\x1f\x10\x1f\x94\xf3\x9d\xe1S\xe4h\xbejc\x8fO\xbd\xedh\xd0-\xe0\x11\xa2\xb6\x87\xf7[X3\xf4l\xce\x8e>\x9c'}}
+[your_program] Destroying peer. Closing connection
+[your_program] Wrote file to /tmp/torrents4015775864/congratulations.gif - 820892 bytes
+[tester::#JV8] Test passed.
+
+[tester::#ND2] Running tests for Stage #ND2 (Download a piece)
+[tester::#ND2] Running ./your_bittorrent.sh download_piece -o /tmp/torrents2913263327/piece-9 /tmp/torrents2913263327/itsworking.gif.torrent 9
+[your_program] Torrent filepath: /tmp/torrents2913263327/itsworking.gif.torrent
+[your_program] Torrent file content: {b'announce': b'http://bittorrent-test-tracker.codecrafters.io/announce', b'created by': b'mktorrent 1.1', b'info': {b'length': 2549700, b'name': b'itsworking.gif', b'piece length': 262144, b'pieces': b"\x01\xcc\x17\xbb\xe6\x0f\xa5\xa5/d\xbd_[d\xd9\x92\x86\xd5\n\xa5\x83\x8fp<\xf7\xf6\xf0\x8d\x1cI~\xd3\x90\xdfx\xf9\r_ufE\xbf\x10\x97KX\x16I\x1e0b\x8bx\xa3\x82\xca6\xc4\xe0_\x84\xbeK\xd8U\xb3K\xce\xdc\x0cn\x98\xf6m>|c5=\x1e\x86Bz\xc9MnO!\xa6\xd0\xd6\xc8\xb7\xff\xa4\xc3\x93\xc3\xb11|p\xcd_D\xd1\xacU\x05\xcb\x85]Rl\xeb\x0f_\x1c\xd5\xe37\x96\xab\x05\xaf\x1f\xa8t\x17:\nl\x12\x98bZ\xd4{O\xe6'*\x8f\xf8\xfc\x86[\x05=\x97Jxh\x14\x14\xb3\x80w\xd7\xb1\xb0q(\xd3\xa6\x01\x80b\xbf\xe7y\xdb\x96\xd3\xa9<\x05\xfb\x81\xd4z\xff\xc9O\t\x85\xb9\x85\xeb\x88\x8a6\xec\x92e(!\xa2\x1b\xe4"}}
+[your_program] Destroying peer. Closing connection
+[your_program] Wrote file to /tmp/torrents2913263327/piece-9 - 190404 bytes
+[tester::#ND2] Running ./your_bittorrent.sh download_piece -o /tmp/torrents2913263327/piece-1 /tmp/torrents2913263327/itsworking.gif.torrent 1
+[your_program] Torrent filepath: /tmp/torrents2913263327/itsworking.gif.torrent
+[your_program] Torrent file content: {b'announce': b'http://bittorrent-test-tracker.codecrafters.io/announce', b'created by': b'mktorrent 1.1', b'info': {b'length': 2549700, b'name': b'itsworking.gif', b'piece length': 262144, b'pieces': b"\x01\xcc\x17\xbb\xe6\x0f\xa5\xa5/d\xbd_[d\xd9\x92\x86\xd5\n\xa5\x83\x8fp<\xf7\xf6\xf0\x8d\x1cI~\xd3\x90\xdfx\xf9\r_ufE\xbf\x10\x97KX\x16I\x1e0b\x8bx\xa3\x82\xca6\xc4\xe0_\x84\xbeK\xd8U\xb3K\xce\xdc\x0cn\x98\xf6m>|c5=\x1e\x86Bz\xc9MnO!\xa6\xd0\xd6\xc8\xb7\xff\xa4\xc3\x93\xc3\xb11|p\xcd_D\xd1\xacU\x05\xcb\x85]Rl\xeb\x0f_\x1c\xd5\xe37\x96\xab\x05\xaf\x1f\xa8t\x17:\nl\x12\x98bZ\xd4{O\xe6'*\x8f\xf8\xfc\x86[\x05=\x97Jxh\x14\x14\xb3\x80w\xd7\xb1\xb0q(\xd3\xa6\x01\x80b\xbf\xe7y\xdb\x96\xd3\xa9<\x05\xfb\x81\xd4z\xff\xc9O\t\x85\xb9\x85\xeb\x88\x8a6\xec\x92e(!\xa2\x1b\xe4"}}
+[your_program] Destroying peer. Closing connection
+[your_program] Wrote file to /tmp/torrents2913263327/piece-1 - 262144 bytes
+[tester::#ND2] Test passed.
+
+[tester::#CA4] Running tests for Stage #CA4 (Peer handshake)
+[tester::#CA4] Running ./your_bittorrent.sh handshake /tmp/torrents1304660453/test.torrent 127.0.0.1:35645
+[tester::#CA4] Tracker started on address 127.0.0.1:37721...
+[tester::#CA4]
+[tester::#CA4] Peer listening on address: 127.0.0.1:35645
+[your_program] Torrent filepath: /tmp/torrents1304660453/test.torrent
+[your_program] Torrent file content: {b'announce': b'http://127.0.0.1:37721/announce', b'info': {b'length': 2097152, b'name': b'fakefilename.iso', b'piece length': 262144, b'pieces': b'\xdd\xf31rY\x9f\xda\x84\xf0\xa2\t\xa3\x03Oy\xf0\xb8\xaa^"yZa\x8a\x1e\xe5\'^\x95(C\xb0\x1aV\xaeN\x14\'R\xef\xcd\xae.\xf52\xd6\x11\xa4k,\xf7\xb6MW\x8c\t\xb3\xac\x0bn\t\x8d\xad\xc0\xc1\x946\xf1\x92~\xa2{\x90\xeb\x18\xb1\xa2\x82\n#\x8f\xa55T\x19\x88m\x9e\xc5n\x86\xcdw\x914>\x93y\xde\x18\x1c\xae\xac\xeb\x15\xfd\x114\xb1\xb4\xb2\x1f\xad\x04\x12["{M\xcf\xfaXn \xd5y\xa4\xdev\t\x0e\x12\xbd\n=\x9b\x1cS\x9f>\xae\xc2\xd7\xeb\x1d\xb59\xc2\xa9\xd2M\x02?\xb9\x16\xb7\x924\xb7i'}}
+[your_program] Tracker URL: http://127.0.0.1:37721/announce
+[your_program] Length: 2097152
+[your_program] Info Hash: c7e51462e85d8631c25f8c9b8c5479345a1de26b
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] ddf33172599fda84f0a209a3034f79f0b8aa5e22
+[your_program] 795a618a1ee5275e952843b01a56ae4e142752ef
+[tester::#CA4] Waiting to receive handshake message
+[tester::#CA4] Received handshake: [infohash: c7e51462e85d8631c25f8c9b8c5479345a1de26b, peer_id: 3030313132323333343435353636373737373737]
+[tester::#CA4]
+[tester::#CA4] Sending back handshake with peer_id: 2b8653b639367d9fcf467e5e6ea923d9cb5ca036
+[your_program] cdae2ef532d611a46b2cf7b64d578c09b3ac0b6e
+[your_program] 098dadc0c19436f1927ea27b90eb18b1a2820a23
+[your_program] 8fa5355419886d9ec56e86cd7791343e9379de18
+[your_program] 1caeaceb15fd1134b1b4b21fad04125b227b4dcf
+[your_program] fa586e20d579a4de76090e12bd0a3d9b1c539f3e
+[your_program] aec2d7eb1db539c2a9d24d023fb916b79234b769
+[your_program] Peer ID: 2b8653b639367d9fcf467e5e6ea923d9cb5ca036
+[your_program] Destroying peer. Closing connection
+[tester::#CA4] Test passed.
+
+[tester::#FI9] Running tests for Stage #FI9 (Discover peers)
+[tester::#FI9] Running ./your_bittorrent.sh peers /tmp/torrents4111816009/test.torrent
+[tester::#FI9] Tracker started on address 127.0.0.1:41127...
+[tester::#FI9]
+[your_program] Torrent filepath: /tmp/torrents4111816009/test.torrent
+[your_program] Torrent file content: {b'announce': b'http://127.0.0.1:41127/announce', b'info': {b'length': 2097152, b'name': b'faketorrent.iso', b'piece length': 262144, b'pieces': b'\xdd\xf31rY\x9f\xda\x84\xf0\xa2\t\xa3\x03Oy\xf0\xb8\xaa^"yZa\x8a\x1e\xe5\'^\x95(C\xb0\x1aV\xaeN\x14\'R\xef\xcd\xae.\xf52\xd6\x11\xa4k,\xf7\xb6MW\x8c\t\xb3\xac\x0bn\t\x8d\xad\xc0\xc1\x946\xf1\x92~\xa2{\x90\xeb\x18\xb1\xa2\x82\n#\x8f\xa55T\x19\x88m\x9e\xc5n\x86\xcdw\x914>\x93y\xde\x18\x1c\xae\xac\xeb\x15\xfd\x114\xb1\xb4\xb2\x1f\xad\x04\x12["{M\xcf\xfaXn \xd5y\xa4\xdev\t\x0e\x12\xbd\n=\x9b\x1cS\x9f>\xae\xc2\xd7\xeb\x1d\xb59\xc2\xa9\xd2M\x02?\xb9\x16\xb7\x924\xb7i'}}
+[your_program] Tracker URL: http://127.0.0.1:41127/announce
+[your_program] Length: 2097152
+[your_program] Info Hash: a18a79fa44e045b1e13879166d35823e848419f8
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] ddf33172599fda84f0a209a3034f79f0b8aa5e22
+[your_program] 795a618a1ee5275e952843b01a56ae4e142752ef
+[your_program] cdae2ef532d611a46b2cf7b64d578c09b3ac0b6e
+[your_program] 098dadc0c19436f1927ea27b90eb18b1a2820a23
+[your_program] 8fa5355419886d9ec56e86cd7791343e9379de18
+[your_program] 1caeaceb15fd1134b1b4b21fad04125b227b4dcf
+[your_program] fa586e20d579a4de76090e12bd0a3d9b1c539f3e
+[your_program] aec2d7eb1db539c2a9d24d023fb916b79234b769
+[your_program] Peers:
+[your_program] 106.72.196.0:41485
+[your_program] 188.119.61.177:6881
+[your_program] 2.7.245.20:51413
+[your_program] 71.224.0.29:51414
+[your_program] 37.48.74.20:44697
+[your_program] 82.149.227.229:6890
+[your_program] 72.175.28.2:58966
+[your_program] 45.67.229.74:60007
+[your_program] 195.90.215.221:45682
+[your_program] 66.55.206.70:60000
+[your_program] 69.53.20.159:60000
+[your_program] 216.195.129.27:60000
+[tester::#FI9] Test passed.
+
+[tester::#BF7] Running tests for Stage #BF7 (Piece hashes)
+[tester::#BF7] Running ./your_bittorrent.sh info /tmp/torrents345470902/test.torrent
+[your_program] Torrent filepath: /tmp/torrents345470902/test.torrent
+[your_program] Torrent file content: {b'announce': b'http://bttracker.debian.org:6969/announce', b'info': {b'length': 1048576, b'name': b'faketorrent.iso', b'piece length': 262144, b'pieces': b'0\xb4\xec\xff\xf6l\xb4\xc3\x81\xe8\xfb,^.\xbc\xdf\xaa\xe4f\x05\x89F\n\xacgQ\x0fY\x8d>\xab\x07\xba\\\xae\xb4\x94\t_g\xe8\x1b\xdd`\xef\xa9\x1d\xe1\xafy%\xad\xc5\x8e\x0c\xf2\xd3\xb91ap\xed\xca\xc2a\x1a\x88)\xeb\xf4g\xa6\x84\x9f]\x84\x08\xd9\xd8\xf4'}}
+[your_program] Tracker URL: http://bttracker.debian.org:6969/announce
+[your_program] Length: 1048576
+[your_program] Info Hash: c1b5ac923f3700984cc7c6d1d42bbe599a4a5759
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] 30b4ecfff66cb4c381e8fb2c5e2ebcdfaae46605
+[your_program] 89460aac67510f598d3eab07ba5caeb494095f67
+[your_program] e81bdd60efa91de1af7925adc58e0cf2d3b93161
+[your_program] 70edcac2611a8829ebf467a6849f5d8408d9d8f4
+[tester::#BF7] Test passed.
+
+[tester::#RB2] Running tests for Stage #RB2 (Calculate info hash)
+[tester::#RB2] Running ./your_bittorrent.sh info /tmp/torrents45341446/codercat.gif.torrent
+[your_program] Torrent filepath: /tmp/torrents45341446/codercat.gif.torrent
+[your_program] Torrent file content: {b'announce': b'http://bittorrent-test-tracker.codecrafters.io/announce', b'created by': b'mktorrent 1.1', b'info': {b'length': 2994120, b'name': b'codercat.gif', b'piece length': 262144, b'pieces': b"<40\x9f\xae\xbf\x01\xe4\x9c\x0fc\xc9\x0b~\xdc\xc2%\x9bj\xd0\xb8Q\x9b.\xa9\xbb7?\xf5g\xf6DB\x81V\xc9\x8a\x1d\x00\xfc\x9d\xc8\x13fXu6\xf4\x8c \x98\xa1\xd7\x96\x92\xf2Y\x0f\xd9\xa6\x03<a\xe7\x17\xf8\xc0\xd1\xe5XPh\x0e\xb4Q\xe3T;b\x03oT\xe7F\xec6\x9fe\xf3-E\xf7{\x1f\x1c7b\x1f\xb9e\xc6VpKx\x10~\xd5S\xbd\x08\x13\xf9/\xefx\x02g\xc0{t1\xb8h17\xd2\x0f\xf5\x94\xb1\xf1\xbf?\x885\x16]h\xfb\x042\xbd\x8ew\x96\x08\xd2w\x82\xb7y\xc7s\x80b\xe9\xb5\n\xb5\xd6\xbc\x04\t\xa0\xf3\xa9P8Wf\x9dG\xfeu-Ew\xea\x00\xa8n\xe6\xab\xbc0\xcd\xdb\x80\n\x0bb\xd7\xa2\x96\x11\x11f\xd89x?R\xb7\x0f\x0c\x90-V\x19k\xd3\xee\x7f7\x9b]\xb5~;=\x8d\xb9\xe3M\xb6;K\xa1\xbe'\x93\t\x11\xaa7\xb3\xf9\x97\xdd"}}
+[your_program] Tracker URL: http://bittorrent-test-tracker.codecrafters.io/announce
+[your_program] Length: 2994120
+[your_program] Info Hash: c77829d2a77d6516f88cd7a3de1a26abcbfab0db
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] 3c34309faebf01e49c0f63c90b7edcc2259b6ad0
+[your_program] b8519b2ea9bb373ff567f644428156c98a1d00fc
+[your_program] 9dc81366587536f48c2098a1d79692f2590fd9a6
+[your_program] 033c61e717f8c0d1e55850680eb451e3543b6203
+[your_program] 6f54e746ec369f65f32d45f77b1f1c37621fb965
+[your_program] c656704b78107ed553bd0813f92fef780267c07b
+[your_program] 7431b8683137d20ff594b1f1bf3f8835165d68fb
+[your_program] 0432bd8e779608d27782b779c7738062e9b50ab5
+[your_program] d6bc0409a0f3a9503857669d47fe752d4577ea00
+[your_program] a86ee6abbc30cddb800a0b62d7a296111166d839
+[your_program] 783f52b70f0c902d56196bd3ee7f379b5db57e3b
+[your_program] 3d8db9e34db63b4ba1be27930911aa37b3f997dd
+[tester::#RB2] Running ./your_bittorrent.sh info /tmp/torrents45341446/itsworking.gif.torrent
+[your_program] Torrent filepath: /tmp/torrents45341446/itsworking.gif.torrent
+[your_program] Torrent file content: {b'announce': b'http://bittorrent-test-tracker.codecrafters.io/announce', b'created by': b'mktorrent 1.1', b'info': {b'length': 2549700, b'name': b'itsworking.gif', b'piece length': 262144, b'pieces': b"\x01\xcc\x17\xbb\xe6\x0f\xa5\xa5/d\xbd_[d\xd9\x92\x86\xd5\n\xa5\x83\x8fp<\xf7\xf6\xf0\x8d\x1cI~\xd3\x90\xdfx\xf9\r_ufE\xbf\x10\x97KX\x16I\x1e0b\x8bx\xa3\x82\xca6\xc4\xe0_\x84\xbeK\xd8U\xb3K\xce\xdc\x0cn\x98\xf6m>|c5=\x1e\x86Bz\xc9MnO!\xa6\xd0\xd6\xc8\xb7\xff\xa4\xc3\x93\xc3\xb11|p\xcd_D\xd1\xacU\x05\xcb\x85]Rl\xeb\x0f_\x1c\xd5\xe37\x96\xab\x05\xaf\x1f\xa8t\x17:\nl\x12\x98bZ\xd4{O\xe6'*\x8f\xf8\xfc\x86[\x05=\x97Jxh\x14\x14\xb3\x80w\xd7\xb1\xb0q(\xd3\xa6\x01\x80b\xbf\xe7y\xdb\x96\xd3\xa9<\x05\xfb\x81\xd4z\xff\xc9O\t\x85\xb9\x85\xeb\x88\x8a6\xec\x92e(!\xa2\x1b\xe4"}}
+[your_program] Tracker URL: http://bittorrent-test-tracker.codecrafters.io/announce
+[your_program] Length: 2549700
+[your_program] Info Hash: 70edcac2611a8829ebf467a6849f5d8408d9d8f4
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] 01cc17bbe60fa5a52f64bd5f5b64d99286d50aa5
+[your_program] 838f703cf7f6f08d1c497ed390df78f90d5f7566
+[your_program] 45bf10974b5816491e30628b78a382ca36c4e05f
+[your_program] 84be4bd855b34bcedc0c6e98f66d3e7c63353d1e
+[your_program] 86427ac94d6e4f21a6d0d6c8b7ffa4c393c3b131
+[your_program] 7c70cd5f44d1ac5505cb855d526ceb0f5f1cd5e3
+[your_program] 3796ab05af1fa874173a0a6c1298625ad47b4fe6
+[your_program] 272a8ff8fc865b053d974a78681414b38077d7b1
+[your_program] b07128d3a6018062bfe779db96d3a93c05fb81d4
+[your_program] 7affc94f0985b985eb888a36ec92652821a21be4
+[tester::#RB2] Running ./your_bittorrent.sh info /tmp/torrents45341446/congratulations.gif.torrent
+[your_program] Torrent filepath: /tmp/torrents45341446/congratulations.gif.torrent
+[your_program] Torrent file content: {b'announce': b'http://bittorrent-test-tracker.codecrafters.io/announce', b'created by': b'mktorrent 1.1', b'info': {b'length': 820892, b'name': b'congratulations.gif', b'piece length': 262144, b'pieces': b'=B\xa2\x0e\xdb\x1c\xf8@\xcd5(\xd3\xa9\xe9!\xdbc8\xa4ci\xf8\x85\xb3\x98\x8aR\xff\xb05\x91\x98T\x02\xb6\xd5(Y@\xabv\x86\x9el\x9c\x1f\x10\x1f\x94\xf3\x9d\xe1S\xe4h\xbejc\x8fO\xbd\xedh\xd0-\xe0\x11\xa2\xb6\x87\xf7[X3\xf4l\xce\x8e>\x9c'}}
+[your_program] Tracker URL: http://bittorrent-test-tracker.codecrafters.io/announce
+[your_program] Length: 820892
+[your_program] Info Hash: 1cad4a486798d952614c394eb15e75bec587fd08
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] 3d42a20edb1cf840cd3528d3a9e921db6338a463
+[your_program] 69f885b3988a52ffb03591985402b6d5285940ab
+[your_program] 76869e6c9c1f101f94f39de153e468be6a638f4f
+[your_program] bded68d02de011a2b687f75b5833f46cce8e3e9c
+[tester::#RB2] Test passed.
+
+[tester::#OW9] Running tests for Stage #OW9 (Parse torrent file)
+[tester::#OW9] Running ./your_bittorrent.sh info /tmp/torrents2579826565/codercat.gif.torrent
+[your_program] Torrent filepath: /tmp/torrents2579826565/codercat.gif.torrent
+[your_program] Torrent file content: {b'announce': b'http://bittorrent-test-tracker.codecrafters.io/announce', b'created by': b'mktorrent 1.1', b'info': {b'length': 2994120, b'name': b'codercat.gif', b'piece length': 262144, b'pieces': b"<40\x9f\xae\xbf\x01\xe4\x9c\x0fc\xc9\x0b~\xdc\xc2%\x9bj\xd0\xb8Q\x9b.\xa9\xbb7?\xf5g\xf6DB\x81V\xc9\x8a\x1d\x00\xfc\x9d\xc8\x13fXu6\xf4\x8c \x98\xa1\xd7\x96\x92\xf2Y\x0f\xd9\xa6\x03<a\xe7\x17\xf8\xc0\xd1\xe5XPh\x0e\xb4Q\xe3T;b\x03oT\xe7F\xec6\x9fe\xf3-E\xf7{\x1f\x1c7b\x1f\xb9e\xc6VpKx\x10~\xd5S\xbd\x08\x13\xf9/\xefx\x02g\xc0{t1\xb8h17\xd2\x0f\xf5\x94\xb1\xf1\xbf?\x885\x16]h\xfb\x042\xbd\x8ew\x96\x08\xd2w\x82\xb7y\xc7s\x80b\xe9\xb5\n\xb5\xd6\xbc\x04\t\xa0\xf3\xa9P8Wf\x9dG\xfeu-Ew\xea\x00\xa8n\xe6\xab\xbc0\xcd\xdb\x80\n\x0bb\xd7\xa2\x96\x11\x11f\xd89x?R\xb7\x0f\x0c\x90-V\x19k\xd3\xee\x7f7\x9b]\xb5~;=\x8d\xb9\xe3M\xb6;K\xa1\xbe'\x93\t\x11\xaa7\xb3\xf9\x97\xdd"}}
+[your_program] Tracker URL: http://bittorrent-test-tracker.codecrafters.io/announce
+[your_program] Length: 2994120
+[your_program] Info Hash: c77829d2a77d6516f88cd7a3de1a26abcbfab0db
+[your_program] Piece Length: 262144
+[your_program] Piece Hashes:
+[your_program] 3c34309faebf01e49c0f63c90b7edcc2259b6ad0
+[your_program] b8519b2ea9bb373ff567f644428156c98a1d00fc
+[your_program] 9dc81366587536f48c2098a1d79692f2590fd9a6
+[your_program] 033c61e717f8c0d1e55850680eb451e3543b6203
+[your_program] 6f54e746ec369f65f32d45f77b1f1c37621fb965
+[your_program] c656704b78107ed553bd0813f92fef780267c07b
+[your_program] 7431b8683137d20ff594b1f1bf3f8835165d68fb
+[your_program] 0432bd8e779608d27782b779c7738062e9b50ab5
+[your_program] d6bc0409a0f3a9503857669d47fe752d4577ea00
+[your_program] a86ee6abbc30cddb800a0b62d7a296111166d839
+[your_program] 783f52b70f0c902d56196bd3ee7f379b5db57e3b
+[your_program] 3d8db9e34db63b4ba1be27930911aa37b3f997dd
+[tester::#OW9] Checking for tracker URL (Tracker URL: http://bittorrent-test-tracker.codecrafters.io/announce)
+[tester::#OW9] Tracker URL is correct
+[tester::#OW9] Checking for length (Length: 2994120)
+[tester::#OW9] Length is correct
+[tester::#OW9] Test passed.
+
+[tester::#MN6] Running tests for Stage #MN6 (Decode bencoded dictionaries)
+[tester::#MN6] Running ./your_bittorrent.sh decode de
+[tester::#MN6] Expected output: {}
+[your_program] {}
+[tester::#MN6] Running ./your_bittorrent.sh decode d3:foo6:banana5:helloi52ee
+[tester::#MN6] Expected output: {"foo":"banana","hello":52}
+[your_program] {"foo": "banana", "hello": 52}
+[tester::#MN6] Running ./your_bittorrent.sh decode d10:inner_dictd4:key16:value14:key2i42e8:list_keyl5:item15:item2i3eeee
+[tester::#MN6] Expected output: {"inner_dict":{"key1":"value1","key2":42,"list_key":["item1","item2",3]}}
+[your_program] {"inner_dict": {"key1": "value1", "key2": 42, "list_key": ["item1", "item2", 3]}}
+[tester::#MN6] Test passed.
+
+[tester::#AH1] Running tests for Stage #AH1 (Decode bencoded lists)
+[tester::#AH1] Running ./your_bittorrent.sh decode le
+[tester::#AH1] Expected output: []
+[your_program] []
+[tester::#AH1] Running ./your_bittorrent.sh decode l9:blueberryi961ee
+[tester::#AH1] Expected output: ["blueberry",961]
+[your_program] ["blueberry", 961]
+[tester::#AH1] Running ./your_bittorrent.sh decode lli961e9:blueberryee
+[tester::#AH1] Expected output: [[961,"blueberry"]]
+[your_program] [[961, "blueberry"]]
+[tester::#AH1] Running ./your_bittorrent.sh decode lli4eei5ee
+[tester::#AH1] Expected output: [[4],5]
+[your_program] [[4], 5]
+[tester::#AH1] Test passed.
+
+[tester::#EB4] Running tests for Stage #EB4 (Decode bencoded integers)
+[tester::#EB4] Running ./your_bittorrent.sh decode i1290216628e
+[your_program] 1290216628
+[tester::#EB4] Running ./your_bittorrent.sh decode i4294967300e
+[your_program] 4294967300
+[tester::#EB4] Running ./your_bittorrent.sh decode i-52e
+[your_program] -52
+[tester::#EB4] Test passed.
+
+[tester::#NS2] Running tests for Stage #NS2 (Decode bencoded strings)
+[tester::#NS2] Running ./your_bittorrent.sh decode 5:mango
+[your_program] "mango"
+[tester::#NS2] Running ./your_bittorrent.sh decode 55:http://bittorrent-test-tracker.codecrafters.io/announce
+[your_program] "http://bittorrent-test-tracker.codecrafters.io/announce"
+[tester::#NS2] Test passed.
+
+Test passed. Congrats!

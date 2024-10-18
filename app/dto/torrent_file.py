@@ -1,4 +1,5 @@
 import hashlib
+import logging
 import math
 from dataclasses import dataclass
 from typing import List
@@ -6,6 +7,8 @@ from typing import List
 import bencodepy
 
 from app.dto.magnet import Data, Magnet
+
+_log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -55,8 +58,8 @@ class TorrentFile:
     def from_file(filepath: str) -> "TorrentFile":
         bc = bencodepy.Bencode()
         content = bc.read(filepath)
-        print(f"Torrent filepath: {filepath}")
-        print(f"Torrent file content: {content}")
+        _log.debug(f"Torrent filepath: {filepath}")
+        _log.debug(f"Torrent file content: {content}")
 
         file = TorrentFile()
         file.content = content
@@ -65,8 +68,8 @@ class TorrentFile:
 
     @staticmethod
     def from_metadata(magnet: Magnet, metadata: Data) -> "TorrentFile":
-        # print(f"Magnet: {magnet}")
-        # print(f"Metadata: {metadata}")
+        _log.debug(f"Magnet: {magnet}")
+        _log.debug(f"Metadata: {metadata}")
 
         content = {
             b"announce": bytes(magnet.tracker, encoding="utf-8"),
@@ -108,11 +111,11 @@ class TorrentFile:
 
     def __repr__(self):
         return (
-            f"Tracker URL: {self.tracker}\n"
-            + f"Length: {self.length}\n"
-            + f"Info Hash: {self.sha1_info_hash.hex()}\n"
-            + f"Piece Length: {self.piece_length}\n"
-            + f"Piece Hashes:\n{"\n".join(piece.hash_ for piece in self.pieces)}"
+                f"Tracker URL: {self.tracker}\n"
+                + f"Length: {self.length}\n"
+                + f"Info Hash: {self.sha1_info_hash.hex()}\n"
+                + f"Piece Length: {self.piece_length}\n"
+                + f"Piece Hashes:\n{"\n".join(piece.hash_ for piece in self.pieces)}"
         )
 
     def _parse_pieces(self) -> [str]:
@@ -121,7 +124,7 @@ class TorrentFile:
         hashes = []
         start = 0
         while start < len(pieces_bytes) + hash_length:
-            hash_ = pieces_bytes[start : start + hash_length].hex()
+            hash_ = pieces_bytes[start: start + hash_length].hex()
             if hash_:
                 hashes.append(hash_)
             start += hash_length

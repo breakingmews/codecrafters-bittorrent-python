@@ -1,3 +1,4 @@
+import logging
 import random
 from urllib.parse import parse_qs, urlparse
 
@@ -6,18 +7,20 @@ from app.dto.torrent_file import TorrentFile
 from app.peer import Peer
 from app.tracker import Tracker
 
+_log = logging.getLogger(__name__)
+
 
 def save_file(destination: str, content: bytes):
     with open(destination, "wb") as f:
         f.write(content)
-    print(f"Wrote file to {destination} - {len(content)} bytes")
+    _log.info(f"Wrote file to {destination} - {len(content)} bytes")
 
 
 def download(torrent_file: TorrentFile, piece_nr: int = None, peer: Peer = None):
     if not peer:
-        # print(f"\n{torrent_file}")
+        _log.debug(f"\n{torrent_file}")
         peers = Tracker.get_peers(torrent_file)
-        # print(f"\nPeers:\n{"\n".join(peers)}")
+        _log.debug(f"\nPeers:\n{"\n".join(peers)}")
 
         peer = Peer(peers[random.randint(0, len(peers) - 1)])
         peer.shake_hands(torrent_file.sha1_info_hash)

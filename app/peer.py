@@ -1,3 +1,4 @@
+import logging
 import socket
 
 from app.dto.magnet import Data, ExtensionHandshake
@@ -13,33 +14,35 @@ from app.dto.peer_message import (
 )
 from app.dto.torrent_file import TorrentFile
 
+_log = logging.getLogger(__name__)
+
 
 class Peer:
     def __init__(self, peer: str):
         self.address = Peer._get_address(peer)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect(self.address)
-        # print(f"\nConnected to peer: {self.address}")
+        _log.debug(f"\nConnected to peer: {self.address}")
 
     def __del__(self):
-        print("Destroying peer. Closing connection")
+        _log.debug("Destroying peer. Closing connection")
         self.socket.close()
 
     @staticmethod
     def _get_address(peer: str):
         address = peer.split(":")[0], int(peer.split(":")[1])
-        # print(f"Peer address: {address}")
+        _log.debug(f"Peer address: {address}")
         return address
 
     def send(self, buffer: bytes, size=1024) -> bytes:
-        # print(f"Sending: {buffer}")
+        _log.debug(f"Sending: {buffer}")
         self.socket.sendall(buffer)
         return self.socket.recv(size)
 
     def wait(self, message_type: any, size=1024) -> bytes:
-        # print(f"\nWait for {message_type}")
+        _log.debug(f"\nWait for {message_type}")
         response = self.socket.recv(size)
-        # print(f"Received: {response}")
+        _log.debug(f"Received: {response}")
         is_keep_alive = PeerMessage.is_keep_alive(response)
         expected_message_type = (
             False
@@ -52,11 +55,11 @@ class Peer:
         return response
 
     def request_block(self, request: Request) -> bytes:
-        # print(f"Request block: {request}")
+        _log.debug(f"Request block: {request}")
         self.socket.sendall(request.encode())
 
         response = self.socket.recv(request.block_size)
-        # print(f"Chunk size: {len(response)}")
+        _log.debug(f"Chunk size: {len(response)}")
         if len(response) == 0:
             return b""
         piece = Piece.decode(response)
@@ -64,13 +67,13 @@ class Peer:
 
         while True:
             response = self.socket.recv(request.block_size)
-            # print(f"Chunk size: {len(response)}")
+            _log.debug(f"Chunk size: {len(response)}")
             if PeerMessage.is_keep_alive(response):
-                print(response)
+                _log.debug(response)
                 break
 
             block += response
-            # print(f"Block size: {len(block)}")
+            _log.debug(f"Block size: {len(block)}")
 
             if len(block) == request.block_size:
                 break
@@ -81,58 +84,58 @@ class Peer:
         handshake = Handshake(
             sha1_info_hash=sha1_info_hash, supports_extensions=supports_extensions
         )
-        # print(f"Handshake: {handshake}")
+        _log.debug(f"Handshake: {handshake}")
         response = self.send(handshake.encode(), 68)
-        # print(f"\nHandshake response length: {len(response)}")
-        # print(f"Handshake response: {response}")
+        _log.debug(f"\nHandshake response length: {len(response)}")
+        _log.debug(f"Handshake response: {response}")
 
         decoded: Handshake = Handshake.decode(response[:68])
-        # print(f"Handshake decoded: {decoded}")
-        # print(f"\nPeer ID: {handshake.peer_id}")
+        _log.debug(f"Handshake decoded: {decoded}")
+        _log.debug(f"\nPeer ID: {handshake.peer_id}")
 
         return decoded
 
     def send_extensions_handshake(self):
         handshake = ExtensionHandshake()
         response = self.send(handshake.encode())
-        # print(f"Extensions Handshake response: {response}")
+        _log.debug(f"Extensions Handshake response: {response}")
         decoded: ExtensionHandshake = ExtensionHandshake.decode(response)
         return decoded
 
     def request_metadata(self, peers_metadata_extension_id: int):
         request = ExtensionRequest(peers_metadata_extension_id)
         response = self.send(request.encode())
-        # print(f"Metadata response: {response}")
+        _log.debug(f"Metadata response: {response}")
         decoded: Data = Data.decode(response)
         return decoded
 
     def send_interested(self) -> Unchoke:
-        # print("\nSending Interested")
+        _log.debug("\nSending Interested")
         interested = Interested().encode()
         response = self.send(interested)
-        # print(f"Received Unchoke: {response}")
+        _log.debug(f"Received Unchoke: {response}")
         unchoke = Unchoke.decode(response)
 
         return unchoke
 
     def receive_bitfield(self):
         bitfield_bytes = self.wait(BitField)
-        # print(f"Received Bitfield: {bitfield_bytes}")
+        _log.debug(f"Received Bitfield: {bitfield_bytes}")
         bitfield: BitField = BitField.decode(bitfield_bytes)
-        # print(f"Received Bitfield: {bitfield}")
+        _log.debug(f"Received Bitfield: {bitfield}")
         return bitfield
 
     def request_piece(self, torrent_file: TorrentFile, piece_nr: int) -> bytes:
-        # print(f"Downloading piece {piece_nr}")
+        _log.debug(f"Downloading piece {piece_nr}")
         blocks = []
         piece = b""
         for block in torrent_file.pieces[piece_nr].blocks:
-            # print(f"\n{block}")
+            _log.debug(f"\n{block}")
             request = Request(piece_nr, block.offset, block.size)
             response = self.request_block(request)
             blocks.append(response)
             piece = b"".join(blocks)
-            # print(f"Piece size: {len(piece)}")
+            _log.debug(f"Piece size: {len(piece)}")
 
-        # print(f"\nReceived Piece {piece_nr}, size: {len(piece)}")
+        _log.debug(f"\nReceived Piece {piece_nr}, size: {len(piece)}")
         return piece

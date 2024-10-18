@@ -11,22 +11,23 @@ from app.tracker import Tracker
 def save_file(destination: str, content: bytes):
     with open(destination, "wb") as f:
         f.write(content)
-    print(f"Wrote file to {destination}")
+    print(f"Wrote file to {destination} - {len(content)} bytes")
 
 
-def download(torrent_file: TorrentFile, piece_nr: int = None):
-    # print(f"\n{torrent_file}")
-    peers = Tracker.get_peers(torrent_file)
-    # print(f"\nPeers:\n{"\n".join(peers)}")
-
-    peer = Peer(peers[random.randint(0, len(peers) - 1)])
+def download(torrent_file: TorrentFile, piece_nr: int = None, peer: Peer = None):
     try:
-        peer.shake_hands(torrent_file.sha1_info_hash)
-        peer.receive_bitfield()
-        peer.send_interested()
+        if not peer:
+            # print(f"\n{torrent_file}")
+            peers = Tracker.get_peers(torrent_file)
+            # print(f"\nPeers:\n{"\n".join(peers)}")
+
+            peer = Peer(peers[random.randint(0, len(peers) - 1)])
+            peer.shake_hands(torrent_file.sha1_info_hash)
+            peer.receive_bitfield()
+            peer.send_interested()
 
         pieces = []
-        if piece_nr:
+        if piece_nr is not None:
             piece = peer.request_piece(torrent_file, piece_nr)
             pieces.append(piece)
         else:

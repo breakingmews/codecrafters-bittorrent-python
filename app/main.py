@@ -22,7 +22,7 @@ def main():
         "magnet_parse",
         "magnet_handshake",
         "magnet_info",
-        "magnet_download_piece"
+        "magnet_download_piece", "magnet_download"
     ]
 
     if command not in commands:
@@ -124,8 +124,12 @@ def main():
         handshake = peer.shake_hands(
             sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True
         )
+
         if handshake.supports_extensions:
             extension_handshake = peer.send_extensions_handshake()
+
+            peer.send_interested()
+
             peers_metadata_extension_id = (
                 extension_handshake.peers_metadata_extension_id
             )
@@ -133,8 +137,32 @@ def main():
             metadata = peer.request_metadata(peers_metadata_extension_id)
             torrent_file = TorrentFile.from_metadata(magnet, metadata)
 
+            content = download(torrent_file, piece_nr, peer)
+            save_file(destination, content)
+
+    if command == "magnet_download":
+        destination = sys.argv[3]
+        magnet_link = sys.argv[4]
+
+        magnet = parse_magnet_link(magnet_link)
+        peers = Tracker.get_peers_from_magnet(magnet)
+
+        peer = Peer(peers[random.randint(0, len(peers) - 1)])
+        handshake = peer.shake_hands(
+            sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True
+        )
+
+        if handshake.supports_extensions:
+            extension_handshake = peer.send_extensions_handshake()
             peer.send_interested()
-            content = peer.request_piece(torrent_file, piece_nr)
+            peers_metadata_extension_id = (
+                extension_handshake.peers_metadata_extension_id
+            )
+
+            metadata = peer.request_metadata(peers_metadata_extension_id)
+            torrent_file = TorrentFile.from_metadata(magnet, metadata)
+
+            content = download(torrent_file, piece_nr=None, peer=peer)
             save_file(destination, content)
 
 

@@ -133,7 +133,8 @@ def main():
             metadata = peer.request_metadata(peers_metadata_extension_id)
             torrent_file = TorrentFile.from_metadata(magnet, metadata)
 
-            content = download(torrent_file, piece_nr)
+            peer.send_interested()
+            content = peer.request_piece(torrent_file, piece_nr)
             save_file(destination, content)
 
 

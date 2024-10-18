@@ -109,7 +109,7 @@ class Peer:
         piece = b""
         for block in tqdm(torrent_file.pieces[piece_nr].blocks):
             print(f"\n{block}")
-            request = Request(block.ix, block.offset, block.size)
+            request = Request(piece_nr, block.offset, block.size)
             response = self.request_block(request)
             blocks.append(response)
             piece = b"".join(blocks)

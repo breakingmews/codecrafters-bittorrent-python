@@ -1,7 +1,9 @@
 import unittest
 
+import bencodepy
+
 from app.dto.peer_message import BitField, Handshake, Interested, Unchoke
-from app.dto.torrent_file import TorrentFile
+from app.dto.torrent_file import Block, TorrentFile
 from app.main import decode_value
 from app.peer import Peer
 from app.tracker import Tracker
@@ -38,7 +40,20 @@ class TestMain(unittest.TestCase):
     @unittest.skip("Test file generator")
     def test_write_torrent_file(self):
         content = b"d8:announce55:http://bittorrent-test-tracker.codecrafters.io/announce10:created by13:mktorrent 1.14:infod6:lengthi2994120e4:name12:codercat.gif12:piece lengthi262144e6:pieces240:<40\x9f\xae\xbf\x01\xe4\x9c\x0fc\xc9\x0b~\xdc\xc2%\x9bj\xd0\xb8Q\x9b.\xa9\xbb7?\xf5g\xf6DB\x81V\xc9\x8a\x1d\x00\xfc\x9d\xc8\x13fXu6\xf4\x8c \x98\xa1\xd7\x96\x92\xf2Y\x0f\xd9\xa6\x03<a\xe7\x17\xf8\xc0\xd1\xe5XPh\x0e\xb4Q\xe3T;b\x03oT\xe7F\xec6\x9fe\xf3-E\xf7{\x1f\x1c7b\x1f\xb9e\xc6VpKx\x10~\xd5S\xbd\x08\x13\xf9/\xefx\x02g\xc0{t1\xb8h17\xd2\x0f\xf5\x94\xb1\xf1\xbf?\x885\x16]h\xfb\x042\xbd\x8ew\x96\x08\xd2w\x82\xb7y\xc7s\x80b\xe9\xb5\n\xb5\xd6\xbc\x04\t\xa0\xf3\xa9P8Wf\x9dG\xfeu-Ew\xea\x00\xa8n\xe6\xab\xbc0\xcd\xdb\x80\n\x0bb\xd7\xa2\x96\x11\x11f\xd89x?R\xb7\x0f\x0c\x90-V\x19k\xd3\xee\x7f7\x9b]\xb5~;=\x8d\xb9\xe3M\xb6;K\xa1\xbe'\x93\t\x11\xaa7\xb3\xf9\x97\xddee"
-        with open("test.torrent", "wb") as f:
+
+        data = {
+            b"announce": b"http://bittorrent-test-tracker.codecrafters.io/announce",
+            b"created by": b"mktorrent 1.1",
+            b"info": {
+                b"length": 820892,
+                b"name": b"congratulations.gif",
+                b"piece length": 262144,
+                b"pieces": b"=B\xa2\x0e\xdb\x1c\xf8@\xcd5(\xd3\xa9\xe9!\xdbc8\xa4ci\xf8\x85\xb3\x98\x8aR\xff\xb05\x91\x98T\x02\xb6\xd5(Y@\xabv\x86\x9el\x9c\x1f\x10\x1f\x94\xf3\x9d\xe1S\xe4h\xbejc\x8fO\xbd\xedh\xd0-\xe0\x11\xa2\xb6\x87\xf7[X3\xf4l\xce\x8e>\x9c",
+            },
+        }
+        content = bencodepy.encode(data)
+
+        with open("congratulations.torrent", "wb") as f:
             f.write(content)
 
     def test_read_torrent_file(self):
@@ -72,6 +87,22 @@ class TestMain(unittest.TestCase):
         for i, piece in enumerate(file.pieces):
             self.assertEqual(expected_piece_sizes[i], piece.size)
             self.assertEqual(expected_hashes[i], piece.hash_)
+
+    def test_decode_torrent_file_congratulations(self):
+        # arrange
+        filepath = "congratulations.torrent"
+
+        # act
+        file = TorrentFile(filepath)
+
+        # assert
+        expected_piece_sizes = 3 * [262144] + [34460]
+        expected_last_block = Block(ix=2, offset=2 * 16 * 1024, size=1692)
+
+        for i, piece in enumerate(file.pieces):
+            self.assertEqual(expected_piece_sizes[i], piece.size)
+
+        self.assertEqual(expected_last_block, file.pieces[-1].blocks[-1])
 
     def test_encode_hash(self):
         hash_ = "d69f91e6b2ae4c542468d1073a71d4ea13879a7f"

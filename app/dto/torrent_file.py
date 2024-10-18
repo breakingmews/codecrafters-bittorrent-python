@@ -1,4 +1,5 @@
 import hashlib
+import math
 from dataclasses import dataclass
 from typing import List
 
@@ -32,7 +33,7 @@ class Piece:
         if blocks_count.is_integer():
             block_sizes = int(blocks_count) * [self._block_size]
         else:
-            blocks_count = int(round(blocks_count))
+            blocks_count = int(math.ceil(blocks_count))
             last_block_size = self.size - (blocks_count - 1) * self._block_size
             block_sizes = (blocks_count - 1) * [self._block_size] + [last_block_size]
 

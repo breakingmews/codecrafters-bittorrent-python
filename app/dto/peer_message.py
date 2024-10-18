@@ -108,32 +108,35 @@ class Unchoke(PeerMessage):
         return decoded
 
 
-# A piece is broken into blocks of 16 kiB (16 * 1024 bytes)
-
-
 @dataclass
 class Request(PeerMessage):
     id_ = 6  # 1 byte
 
     length = 1 + 4 + 4 + 4
-    index: int = 0  # 4 bytes
+    piece_index: int = 0  # 4 bytes
     begin: int = 0  # 4 bytes
 
+    # A piece is broken into blocks of 16 kiB (16 * 1024 bytes)
     block_size: int = 16 * 1024  # 4 bytes
 
-    def __init__(self, index: int, begin: int, block_size: int):
-        self.index = index
+    def __init__(self, piece_index: int, begin: int, block_size: int):
+        self.piece_index = piece_index
         self.begin = begin
         self.block_size = block_size
 
     def encode(self):
         encoded = struct.pack(
-            "!IBIII", self.length, self.id_, self.index, self.begin, self.block_size
+            "!IBIII",
+            self.length,
+            self.id_,
+            self.piece_index,
+            self.begin,
+            self.block_size,
         )
         return encoded
 
     def __repr__(self):
-        return f"length={self.length}, id_={self.id_}, index={self.index}, begin={self.begin}, block_size={self.block_size}"
+        return f"length={self.length}, id_={self.id_}, piece_index={self.piece_index}, begin={self.begin}, block_size={self.block_size}"
 
 
 class Piece(PeerMessage):

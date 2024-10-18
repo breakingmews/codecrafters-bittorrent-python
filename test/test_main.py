@@ -2,7 +2,8 @@ import unittest
 
 import bencodepy
 
-from app.dto.peer_message import BitField, Handshake, Interested, Unchoke, ExtensionHandshake
+from app.dto.magnet import ExtensionHandshake
+from app.dto.peer_message import BitField, Handshake, Interested, Unchoke
 from app.dto.torrent_file import Block, TorrentFile
 from app.main import decode_value
 from app.peer import Peer
@@ -164,6 +165,9 @@ class TestMain(unittest.TestCase):
 
         decoded = ExtensionHandshake.decode(buffer)
         self.assertEqual(1, 2)
+
+    def test_decode_request_extension_response(self):
+        buffer = b'\x00\x00\x00\xb1\x14\x10d8:msg_typei1e5:piecei0e10:total_sizei132eed6:lengthi636505e4:name11:magnet1.gif12:piece lengthi262144e6:pieces60:;F\xa9m\x9b\xc3qm\x1bu\xda\x91\xe6\xd7S\xa7\x93\xad\x1c\xef\xed\xa4\x17\xcb\\\x1c\xdb\xf8A\x12\\A-\xa0\xbe\xc9\xdb\x83\x01\xf3B/E\xb1\x05.-E\xda>*e\x16\xe1\xbb\x1f\x1d\xb0\x073e'
 
 
 if __name__ == "__main__":

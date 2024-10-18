@@ -21,6 +21,7 @@ def main():
         "download",
         "magnet_parse",
         "magnet_handshake",
+        "magnet_info"
     ]
 
     if command not in commands:
@@ -83,7 +84,7 @@ def main():
         print(f"Info Hash: {magnet.info_hash}")
 
     # ./your_bittorrent.sh magnet_handshake magnet:?xt=urn:btih:d69f91e6b2ae4c542468d1073a71d4ea13879a7f&dn=sample.torrent&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce
-    if command == "magnet_handshake":
+    if command in ("magnet_handshake", "magnet_info"):
         magnet_link = sys.argv[2]
         magnet = parse_magnet_link(magnet_link)
         peers = Tracker.get_peers_from_magnet(magnet)
@@ -95,8 +96,12 @@ def main():
 
         if handshake.supports_extensions:
             extension_handshake = peer.send_extensions_handshake()
+            peers_metadata_extension_id = extension_handshake.payload[b"m"][b"ut_metadata"]
             print(f"Extension handshake: {extension_handshake}")
-            print(f"Peer Metadata Extension ID: {extension_handshake.payload[b"m"][b"ut_metadata"]}")
+            print(f"Peer Metadata Extension ID: {peers_metadata_extension_id}")
+
+            if command == "magnet_info":
+                peer.send_request_extension(peers_metadata_extension_id)
 
 
 if __name__ == "__main__":

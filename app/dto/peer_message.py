@@ -1,40 +1,10 @@
 import struct
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
-import bencodepy
 import bitstruct
 
 from app.const import PEER_ID
-
-
-@dataclass
-class ExtensionHandshake:
-    length: int  # 4
-    id_: int = 20  # 1
-    extension_message_id: int = 0  # 1
-    payload: dict = field(default_factory=dict)
-
-    def __init__(self):
-        self.payload = {"m": {"ut_metadata": 16}}
-
-    def encode(self) -> bytes:
-        payload_encoded = bencodepy.encode(self.payload)
-        extension_length = 1 + 1 + len(payload_encoded)
-        extension_encoded = struct.pack("!I", extension_length) + struct.pack("!BB", self.id_,
-                                                                              self.extension_message_id) + payload_encoded
-        return extension_encoded
-
-    @staticmethod
-    def decode(buffer: bytes):
-        bitfield = BitField.decode(buffer)
-        ext_buffer = buffer[4 + bitfield.length:]
-        extension = ExtensionHandshake()
-        extension.length = struct.unpack("!I", ext_buffer[:4])[0]
-        extension.id_ = struct.unpack("!B", ext_buffer[4:5])[0]
-        extension.extension_message_id = struct.unpack("!B", ext_buffer[5:6])[0]
-        extension.payload = bencodepy.decode(ext_buffer[6:])
-        return extension
 
 
 @dataclass

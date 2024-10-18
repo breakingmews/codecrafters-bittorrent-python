@@ -1,8 +1,9 @@
 import socket
 
+from app.dto.magnet import ExtensionHandshake, Request as ExtensionRequest
 from app.dto.peer_message import (
     BitField,
-    Handshake, Interested, ExtensionHandshake,
+    Handshake, Interested,
     PeerMessage,
     Piece,
     Request,
@@ -90,6 +91,11 @@ class Peer:
         print(f"Extensions Handshake response: {response}")
         decoded: ExtensionHandshake = ExtensionHandshake.decode(response)
         return decoded
+
+    def send_request_extension(self, peers_metadata_extension_id: int):
+        request = ExtensionRequest(peers_metadata_extension_id)
+        response = self.send(request.encode())
+        print(f"Extension Request response: {response}")
 
     def send_interested(self) -> Unchoke:
         # print("\nSending Interested")

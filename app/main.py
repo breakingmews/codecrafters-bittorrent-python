@@ -1,7 +1,7 @@
 import json
 import sys
 
-from app.client import do_handshake, get_peers
+from app.client import Peer, Tracker
 from app.codec import decode_value
 from app.dto import Handshake, TorrentFile
 
@@ -31,13 +31,14 @@ def main():
 
         # ./your_bittorrent.sh peers sample.torrent
         if command == "peers":
-            peers = get_peers(torrent_file)
-            print("\n".join(peers))
+            peers = Tracker.get_peers(torrent_file)
+            print(f"Peers:\n{"\n".join(peers)}")
 
         # ./your_bittorrent.sh handshake sample.torrent <peer_ip>:<peer_port>
         if command == "handshake":
-            peer = sys.argv[3]
-            handshake: Handshake = do_handshake(peer, torrent_file)
+            peer_address = sys.argv[3]
+            peer = Peer(peer_address)
+            handshake: Handshake = peer.shake_hands(torrent_file)
             print(f"Peer ID: {handshake.peer_id}")
 
     # ./your_bittorrent.sh download_piece -o /tmp/test-piece-0 sample.torrent 0

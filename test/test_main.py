@@ -1,6 +1,6 @@
 import unittest
 
-from app.client import get_address, url_encode_hash
+from app.client import Peer, Tracker
 from app.dto import TorrentFile
 from app.main import (
     Handshake,
@@ -73,7 +73,7 @@ class TestMain(unittest.TestCase):
     def test_encode_hash(self):
         hash_ = "d69f91e6b2ae4c542468d1073a71d4ea13879a7f"
         expected = "%d6%9f%91%e6%b2%ae%4c%54%24%68%d1%07%3a%71%d4%ea%13%87%9a%7f"
-        encoded = url_encode_hash(hash_)
+        encoded = Tracker._url_encode_hash(hash_)
         self.assertEqual(expected, encoded)
 
     def test_encode_handshake(self):
@@ -93,7 +93,7 @@ class TestMain(unittest.TestCase):
 
     def test_get_address(self):
         peer = "127.0.0.1:43759"
-        address = get_address(peer)
+        address = Peer._get_address(peer)
         expected = ("127.0.0.1", 43759)
         self.assertEqual(expected, address)
 

@@ -1,7 +1,7 @@
 import json
 import sys
 
-from app.client import download, save_file, parse_magnet_link
+from app.client import download, parse_magnet_link, save_file
 from app.codec import decode_value
 from app.dto.torrent_file import TorrentFile
 from app.peer import Peer
@@ -11,7 +11,15 @@ from app.tracker import Tracker
 def main():
     # TODO smart argparse
     command = sys.argv[1]
-    commands = ["decode", "info", "peers", "handshake", "download_piece", "download", "magnet_parse"]
+    commands = [
+        "decode",
+        "info",
+        "peers",
+        "handshake",
+        "download_piece",
+        "download",
+        "magnet_parse",
+    ]
 
     if command not in commands:
         raise NotImplementedError(f"Unknown command {command}")

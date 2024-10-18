@@ -1,8 +1,7 @@
 import json
 import logging
 
-from app.argparser import parse_args
-from app.client import (
+from app.bittorrent.client import (
     download,
     magnet_download,
     magnet_handshake,
@@ -10,11 +9,12 @@ from app.client import (
     parse_magnet_link,
     save_file,
 )
-from app.codec import decode_value
-from app.config import log_config
+from app.bittorrent.codec import decode_value
+from app.bittorrent.peer import Peer
+from app.bittorrent.tracker import Tracker
+from app.core.argparser import parse_args
+from app.core.config import log_config
 from app.dto.torrent_file import TorrentFile
-from app.peer import Peer
-from app.tracker import Tracker
 
 logging.basicConfig(**log_config)
 _log = logging.getLogger(__name__)

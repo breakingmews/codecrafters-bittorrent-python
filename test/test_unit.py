@@ -2,12 +2,12 @@ import unittest
 
 import bencodepy
 
+from app.bittorrent.peer import Peer
+from app.bittorrent.tracker import Tracker
 from app.dto.magnet import Data, ExtensionHandshake
 from app.dto.peer_message import BitField, Handshake, Interested, Unchoke
 from app.dto.torrent_file import Block, TorrentFile
 from app.main import decode_value
-from app.peer import Peer
-from app.tracker import Tracker
 
 
 class TestCodec(unittest.TestCase):
@@ -54,12 +54,12 @@ class TestMain(unittest.TestCase):
         }
         content = bencodepy.encode(data)
 
-        with open("itsworking.torrent", "wb") as f:
+        with open("data/itsworking.torrent", "wb") as f:
             f.write(content)
 
     def test_decode_torrent_file(self):
         # arrange
-        filepath = "test.torrent"
+        filepath = "data/test.torrent"
 
         # act
         file = TorrentFile.from_file(filepath)
@@ -95,7 +95,7 @@ class TestMain(unittest.TestCase):
 
     def test_decode_torrent_file_congratulations(self):
         # arrange
-        filepath = "congratulations.torrent"
+        filepath = "data/congratulations.torrent"
 
         # act
         file = TorrentFile.from_file(filepath)

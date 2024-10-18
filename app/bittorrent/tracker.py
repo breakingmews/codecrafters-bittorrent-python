@@ -3,7 +3,7 @@ import struct
 import bencodepy
 import requests
 
-from app.const import PEER_ID
+from app.core.const import PEER_ID
 from app.dto.magnet import Magnet
 from app.dto.torrent_file import TorrentFile
 
@@ -33,7 +33,7 @@ class Tracker:
         peers = []
         start = 0
         while start < len(decoded):
-            peer = decoded[start : start + 6]
+            peer = decoded[start: start + 6]
             ip = ".".join(str(p) for p in list(peer[0:4]))
             port = str(struct.unpack("!H", bytes(peer[4:]))[0])
             peers.append(ip + ":" + port)
@@ -46,6 +46,6 @@ class Tracker:
 
     @staticmethod
     def _url_encode_hash(hash_):
-        parts = [hash_[i : i + 2] for i in range(0, 40, 2)]
+        parts = [hash_[i: i + 2] for i in range(0, 40, 2)]
         hash_encoded = "".join(["%" + p for p in parts])
         return hash_encoded

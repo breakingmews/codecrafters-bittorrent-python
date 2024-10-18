@@ -3,11 +3,11 @@ import random
 from typing import Tuple
 from urllib.parse import parse_qs, urlparse
 
+from app.bittorrent.peer import Peer
+from app.bittorrent.tracker import Tracker
 from app.dto.magnet import ExtensionHandshake, Magnet
 from app.dto.peer_message import Handshake
 from app.dto.torrent_file import TorrentFile
-from app.peer import Peer
-from app.tracker import Tracker
 
 _log = logging.getLogger(__name__)
 

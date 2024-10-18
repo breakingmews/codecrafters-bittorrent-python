@@ -22,7 +22,7 @@ class Peer:
     @staticmethod
     def _get_address(peer: str):
         address = peer.split(":")[0], int(peer.split(":")[1])
-        print(f"Peer address: {address}")
+        # print(f"Peer address: {address}")
         return address
 
     def send(self, buffer: bytes, size=1024) -> bytes:
@@ -73,19 +73,19 @@ class Peer:
 
     def shake_hands(self, torrent_file: TorrentFile) -> Handshake:
         handshake = Handshake(torrent_file.sha1_info_hash)
-        print(f"Handshake: {handshake}")
+        # print(f"Handshake: {handshake}")
         response = self.send(handshake.encode(), 68)
         # print(f"\nHandshake response length: {len(response)}")
-        print(f"Handshake response: {response}")
+        # print(f"Handshake response: {response}")
 
         decoded: Handshake = Handshake.decode(response[:68])
         # print(f"Handshake decoded: {decoded}")
-        print(f"\nPeer ID: {handshake.peer_id}")
+        # print(f"\nPeer ID: {handshake.peer_id}")
 
         return decoded
 
     def send_interested(self) -> Unchoke:
-        print("\nSending Interested")
+        # print("\nSending Interested")
         interested = Interested().encode()
         response = self.send(interested)
         # print(f"Received Unchoke: {response}")

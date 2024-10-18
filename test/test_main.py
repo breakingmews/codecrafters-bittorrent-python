@@ -1,11 +1,10 @@
 import unittest
 
 from app.client import get_address, url_encode_hash
+from app.dto import TorrentFile
 from app.main import (
     Handshake,
-    decode_file,
     decode_value,
-    parse_hashes,
 )
 
 
@@ -43,20 +42,35 @@ class TestMain(unittest.TestCase):
 
     def test_decode_file(self):
         filepath = "test.torrent"
-        content = decode_file(filepath)
+        content = TorrentFile.read(filepath)
         self.assertEqual(dict, type(content))
 
     def test_parse_hashes(self):
         # arrange
         filepath = "test.torrent"
-        decoded = decode_file(filepath)
+        decoded = TorrentFile.read(filepath)
         info = decoded[b"info"]
+        file = TorrentFile()
+        file.info = info
 
         # act
-        hashes = parse_hashes(info)
+        hashes = file._parse_hashes()
 
         # assert
-        expected = "3c34309faebf01e49c0f63c90b7edcc2259b6ad0\nb8519b2ea9bb373ff567f644428156c98a1d00fc\n9dc81366587536f48c2098a1d79692f2590fd9a6\n033c61e717f8c0d1e55850680eb451e3543b6203\n6f54e746ec369f65f32d45f77b1f1c37621fb965\nc656704b78107ed553bd0813f92fef780267c07b\n7431b8683137d20ff594b1f1bf3f8835165d68fb\n0432bd8e779608d27782b779c7738062e9b50ab5\nd6bc0409a0f3a9503857669d47fe752d4577ea00\na86ee6abbc30cddb800a0b62d7a296111166d839\n783f52b70f0c902d56196bd3ee7f379b5db57e3b\n3d8db9e34db63b4ba1be27930911aa37b3f997dd\n"
+        expected = [
+            "3c34309faebf01e49c0f63c90b7edcc2259b6ad0",
+            "b8519b2ea9bb373ff567f644428156c98a1d00fc",
+            "9dc81366587536f48c2098a1d79692f2590fd9a6",
+            "033c61e717f8c0d1e55850680eb451e3543b6203",
+            "6f54e746ec369f65f32d45f77b1f1c37621fb965",
+            "c656704b78107ed553bd0813f92fef780267c07b",
+            "7431b8683137d20ff594b1f1bf3f8835165d68fb",
+            "0432bd8e779608d27782b779c7738062e9b50ab5",
+            "d6bc0409a0f3a9503857669d47fe752d4577ea00",
+            "a86ee6abbc30cddb800a0b62d7a296111166d839",
+            "783f52b70f0c902d56196bd3ee7f379b5db57e3b",
+            "3d8db9e34db63b4ba1be27930911aa37b3f997dd",
+        ]
         self.assertEqual(expected, hashes)
 
     def test_encode_hash(self):

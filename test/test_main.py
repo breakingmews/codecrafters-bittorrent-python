@@ -18,6 +18,12 @@ class TestMain(unittest.TestCase):
         expected = 52
         self.assertEqual(expected, decoded)
 
+    def test_decode_bencode_list(self):
+        decoded = decode_bencode(b"l5:helloi52ee")
+        expected = [b"hello", 52]
+        self.assertEqual(expected, decoded)
+
+
 
 if __name__ == '__main__':
     unittest.main()

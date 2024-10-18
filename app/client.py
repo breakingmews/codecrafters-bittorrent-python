@@ -1,5 +1,4 @@
 import random
-import traceback
 from urllib.parse import parse_qs, urlparse
 
 from app.dto.magnet import Magnet
@@ -15,33 +14,27 @@ def save_file(destination: str, content: bytes):
 
 
 def download(torrent_file: TorrentFile, piece_nr: int = None, peer: Peer = None):
-    try:
-        if not peer:
-            # print(f"\n{torrent_file}")
-            peers = Tracker.get_peers(torrent_file)
-            # print(f"\nPeers:\n{"\n".join(peers)}")
+    if not peer:
+        # print(f"\n{torrent_file}")
+        peers = Tracker.get_peers(torrent_file)
+        # print(f"\nPeers:\n{"\n".join(peers)}")
 
-            peer = Peer(peers[random.randint(0, len(peers) - 1)])
-            peer.shake_hands(torrent_file.sha1_info_hash)
-            peer.receive_bitfield()
-            peer.send_interested()
+        peer = Peer(peers[random.randint(0, len(peers) - 1)])
+        peer.shake_hands(torrent_file.sha1_info_hash)
+        peer.receive_bitfield()
+        peer.send_interested()
 
-        pieces = []
-        if piece_nr is not None:
-            piece = peer.request_piece(torrent_file, piece_nr)
+    pieces = []
+    if piece_nr is not None:
+        piece = peer.request_piece(torrent_file, piece_nr)
+        pieces.append(piece)
+    else:
+        for ix in range(len(torrent_file.pieces)):
+            piece = peer.request_piece(torrent_file, ix)
             pieces.append(piece)
-        else:
-            for ix in range(len(torrent_file.pieces)):
-                piece = peer.request_piece(torrent_file, ix)
-                pieces.append(piece)
 
-        content = b"".join(pieces)
-        return content
-    except Exception:
-        print(f"Error: {traceback.format_exc()}")
-    finally:
-        print("Closing connection")
-        peer.socket.close()
+    content = b"".join(pieces)
+    return content
 
 
 def parse_magnet_link(link: str):

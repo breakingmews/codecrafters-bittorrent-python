@@ -79,11 +79,11 @@ class TorrentFile:
 
     def __repr__(self):
         return (
-                f"Tracker URL: {self.tracker}\n"
-                + f"Length: {self.length}\n"
-                + f"Info Hash: {self.sha1_info_hash.hex()}\n"
-                + f"Piece Length: {self.piece_length}\n"
-                + f"Piece Hashes:\n{"\n".join(piece.hash_ for piece in self.pieces)}"
+            f"Tracker URL: {self.tracker}\n"
+            + f"Length: {self.length}\n"
+            + f"Info Hash: {self.sha1_info_hash.hex()}\n"
+            + f"Piece Length: {self.piece_length}\n"
+            + f"Piece Hashes:\n{"\n".join(piece.hash_ for piece in self.pieces)}"
         )
 
     def _parse_pieces(self) -> [str]:
@@ -92,13 +92,15 @@ class TorrentFile:
         hashes = []
         start = 0
         while start < len(pieces_bytes) + hash_length:
-            hash_ = pieces_bytes[start: start + hash_length].hex()
+            hash_ = pieces_bytes[start : start + hash_length].hex()
             if hash_:
                 hashes.append(hash_)
             start += hash_length
 
         pieces = []
-        piece_sizes = TorrentFile._calculate_piece_sizes(self.length, self.piece_length, hashes)
+        piece_sizes = TorrentFile._calculate_piece_sizes(
+            self.length, self.piece_length, hashes
+        )
         for i in range(len(hashes)):
             piece = Piece(i, hashes[i], piece_sizes[i])
             pieces.append(piece)

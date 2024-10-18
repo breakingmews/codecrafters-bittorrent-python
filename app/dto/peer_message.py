@@ -1,5 +1,8 @@
 import struct
 from dataclasses import dataclass
+from typing import Any
+
+import bitstruct
 
 from app.const import PEER_ID
 
@@ -24,11 +27,11 @@ class Handshake:
 
     def encode(self):
         encoded = (
-                struct.pack("!B", self._length)
-                + self._protocol.encode()
-                + struct.pack("!B", self._buffer) * 8
-                + self.sha1_info_hash
-                + self.peer_id.encode()
+            struct.pack("!B", self._length)
+            + self._protocol.encode()
+            + struct.pack("!B", self._buffer) * 8
+            + self.sha1_info_hash
+            + self.peer_id.encode()
         )
         return encoded
 
@@ -43,8 +46,8 @@ class Handshake:
 # TODO make abstract class
 @dataclass
 class PeerMessage:
-    id_: str  # 1 byte
-    payload: str  # variable
+    id_: int  # 1 byte
+    payload: Any  # variable
     length: int = 0  # 4 bytes
 
     def encode(self):
@@ -53,8 +56,10 @@ class PeerMessage:
 
     @staticmethod
     def decode(buffer: bytes):
-        length, id_ = struct.unpack("!IB", buffer)
-        decoded = PeerMessage(length, id_)
+        length, id_ = struct.unpack("!IB", buffer[:5])
+        payload = buffer[5:]
+        decoded = PeerMessage(id_=id_, length=length, payload=payload)
+        print(f"Decoded PeerMessage: {decoded}")
         return decoded
 
     @staticmethod
@@ -70,17 +75,20 @@ class BitField(PeerMessage):
     def decode(buffer: bytes):
         print(f"Decoding BitField: {buffer}")
         if len(buffer) == 0:
-            print('Warning: empty bitfield')
+            print("Warning: empty bitfield")
             return
 
-        length, id_, payload = struct.unpack("!IBH", buffer)
-        bitfield = BitField(length, id_, payload)
+        length, id_ = struct.unpack("!IB", buffer[:5])
+        payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5 : 5 + length])
+        bitfield = BitField(id_=id_, length=length, payload=payload)
+        print(f"Bitfield decoded: {bitfield}")
         return bitfield
 
 
 @dataclass
 class Interested(PeerMessage):
     id_ = 2
+    length = 1
 
     # payload = ""
     def __init__(self):
@@ -94,10 +102,9 @@ class Unchoke(PeerMessage):
 
     @staticmethod
     def decode(buffer: bytes):
-        print(f"Decoding Unchoke: {buffer}")
-
-        length = struct.unpack("!I", buffer)[0]
-        decoded = Unchoke(length)
+        length, id_ = struct.unpack("!IB", buffer)
+        decoded = Unchoke(id_=id_, length=length)
+        print(f"Decoded Unchoke: {decoded}")
         return decoded
 
 

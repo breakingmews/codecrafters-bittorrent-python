@@ -28,13 +28,14 @@ def download_piece(destination: str, torrent_filepath: str, piece_nr: int):
         handshake, bitfield = peer.shake_hands(torrent_file)
         print(f"\nPeer ID: {handshake.peer_id}")
 
-        unchoke = peer.interested()
-        print(f"Unchoke: {unchoke}")
+        peer.interested()
 
+        """
         blocks = peer.request_piece(torrent_file, piece_nr)
         print(f"Piece: {blocks}")
 
         save_piece(destination, b"\n".join(blocks))
+        """
     except Exception:
         print(f"Error: {traceback.format_exc()}")
     finally:

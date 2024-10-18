@@ -5,8 +5,9 @@ from app.dto.peer_message import (
     BitField,
     Handshake,
     Interested,
+    PeerMessage,
     Request,
-    Unchoke, PeerMessage,
+    Unchoke,
 )
 from app.dto.torrent_file import TorrentFile
 
@@ -35,7 +36,11 @@ class Peer:
         response = self.socket.recv(size)
         print(f"Received: {response}")
         is_keep_alive = PeerMessage.is_keep_alive(response)
-        expected_message_type = False if is_keep_alive else PeerMessage.decode(response).id_ == message_type.id_
+        expected_message_type = (
+            False
+            if is_keep_alive
+            else PeerMessage.decode(response).id_ == message_type.id_
+        )
         wait_next = is_keep_alive or not expected_message_type
         if wait_next:
             self.wait(message_type, size)
@@ -51,23 +56,20 @@ class Peer:
         decoded: Handshake = Handshake.decode(response[:68])
         print(f"\nHandshake decoded: {decoded}")
 
-        """
-        if len(response) == 75:
-            bitfield: BitField = BitField.decode(response[68:])
-            if bitfield.id_ != BitField.id_:
-                bitfield = BitField.decode(self.wait(BitField))
+        if len(response) == 68:
+            bitfield_bytes = self.wait(BitField)
         else:
-            bitfield = BitField.decode(self.wait(BitField))
-        """
-        bitfield: BitField = BitField.decode(response[68:])
-        print(f"\nBitfield decoded: {bitfield}")
+            bitfield_bytes = response[68:]
+        bitfield: BitField = BitField.decode(bitfield_bytes)
 
         return decoded, bitfield
 
     def interested(self) -> Unchoke:
+        print("Sending Interested")
         interested = Interested().encode()
-        response = self.send(interested, 5)
+        response = self.send(interested)
         unchoke = Unchoke.decode(response)
+        print("Received Unchoke")
         return unchoke
 
     def request_piece(self, torrent_file: TorrentFile, piece_nr: int) -> list:

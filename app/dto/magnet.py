@@ -45,7 +45,6 @@ class Extension:
 
 @dataclass
 class ExtensionHandshake(Extension):
-
     def __init__(self):
         self.payload = {"m": {"ut_metadata": 16}}
 

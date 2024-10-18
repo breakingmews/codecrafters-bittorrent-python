@@ -2,11 +2,8 @@ import json
 import logging
 
 from app.bittorrent.client import (
+    MagnetClient,
     download,
-    magnet_download,
-    magnet_handshake,
-    magnet_info,
-    parse_magnet_link,
     save_file,
 )
 from app.bittorrent.codec import decode_value
@@ -79,14 +76,15 @@ def main():
 
         case "magnet_parse":
             magnet_link = args.magnet_link
-            magnet = parse_magnet_link(magnet_link)
+            magnet = MagnetClient.parse_magnet_link(magnet_link)
             print(f"Tracker URL: {magnet.tracker}")
             print(f"Info Hash: {magnet.info_hash}")
 
         case "magnet_handshake":
             magnet_link = args.magnet_link
 
-            handshake, extension_handshake = magnet_handshake(magnet_link)
+            magnet = MagnetClient(magnet_link)
+            handshake, extension_handshake = magnet.do_handshake()
             print(
                 f"Peer Metadata Extension ID: {extension_handshake.peers_metadata_extension_id}"
             )
@@ -95,7 +93,8 @@ def main():
         case "magnet_info":
             magnet_link = args.magnet_link
 
-            torrent_file = magnet_info(magnet_link)
+            magnet = MagnetClient(magnet_link)
+            torrent_file = magnet.info()
             print(torrent_file)
 
         case "magnet_download_piece":
@@ -103,14 +102,16 @@ def main():
             magnet_link = args.magnet_link
             piece_nr = args.piece_number
 
-            magnet_download(destination, magnet_link, piece_nr)
+            magnet = MagnetClient(magnet_link)
+            magnet.download(destination, piece_nr)
 
         case "magnet_download":
             destination = args.destination
             magnet_link = args.magnet_link
             piece_nr = None
 
-            magnet_download(destination, magnet_link, piece_nr)
+            magnet = MagnetClient(magnet_link)
+            magnet.download(destination, piece_nr)
 
 
 if __name__ == "__main__":

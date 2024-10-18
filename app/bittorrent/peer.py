@@ -74,7 +74,9 @@ class Peer:
 
         return block
 
-    def shake_hands(self, sha1_info_hash: str, supports_extensions=False) -> Handshake:
+    def shake_hands(
+        self, sha1_info_hash: bytes, supports_extensions=False
+    ) -> Handshake:
         handshake = Handshake(
             sha1_info_hash=sha1_info_hash, supports_extensions=supports_extensions
         )

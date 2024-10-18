@@ -21,6 +21,10 @@ class Peer:
         self.socket.connect(self.address)
         # print(f"\nConnected to peer: {self.address}")
 
+    def __del__(self):
+        print("Destroying peer. Closing connection")
+        self.socket.close()
+
     @staticmethod
     def _get_address(peer: str):
         address = peer.split(":")[0], int(peer.split(":")[1])

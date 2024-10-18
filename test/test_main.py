@@ -1,11 +1,10 @@
 import unittest
 
-from app.client import Peer, Tracker
-from app.dto import TorrentFile
-from app.main import (
-    Handshake,
-    decode_value,
-)
+from app.dto.peer_message import Handshake, Request, Unchoke
+from app.dto.torrent_file import TorrentFile
+from app.main import decode_value
+from app.peer import Peer
+from app.tracker import Tracker
 
 
 class TestMain(unittest.TestCase):
@@ -91,11 +90,36 @@ class TestMain(unittest.TestCase):
         )
         self.assertEqual(expected, decoded)
 
+    @unittest.skip("Not implemented")
+    def test_parse_handshake_response(self):
+        response = b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x04\xc7x)\xd2\xa7}e\x16\xf8\x8c\xd7\xa3\xde\x1a&\xab\xcb\xfa\xb0\xdb-RN0.0.0-\xcaBQ\xd1\x916\xb3\xf7x;\x89\x00\x00\x00\x03\x05\xff\xf0"
+
+    def test_decode_unchoke(self):
+        buffer = b"\x00\x00\x00\x03\x05\xff\xf0"
+        decoded = Unchoke.decode(buffer)
+        print()
+
+    def test_encode_request(self):
+        request = Request(index=0, begin=0, length_=1000)
+        print()
+
     def test_get_address(self):
         peer = "127.0.0.1:43759"
         address = Peer._get_address(peer)
         expected = ("127.0.0.1", 43759)
         self.assertEqual(expected, address)
+
+    def test_calculate_piece_sizes(self):
+        # arrange
+        filepath = "test.torrent"
+        file = TorrentFile.read(filepath).decode()
+
+        # act
+        TorrentFile._calculate_piece_sizes(file)
+
+        # assert
+        expected = 11 * [262144] + [110536]
+        self.assertEqual(expected, file._piece_sizes)
 
 
 if __name__ == "__main__":

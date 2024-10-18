@@ -47,7 +47,7 @@ class Handshake:
 
     @property
     def supports_extensions(self):
-        return self.buffer == (0, 0, 0, 0, 0, 16, 0, 0)
+        return self.buffer[5] == 16
 
 
 # TODO make abstract class
@@ -72,6 +72,10 @@ class PeerMessage:
     @staticmethod
     def is_keep_alive(buffer) -> bool:
         return len(buffer) == 0 or buffer == b"\x00\x00\x00\x00"
+
+    @staticmethod
+    def is_bitfield(buffer) -> bool:
+        return buffer[4] == BitField.id_
 
 
 @dataclass

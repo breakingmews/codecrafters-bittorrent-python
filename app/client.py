@@ -1,6 +1,8 @@
 import random
 import traceback
+from urllib.parse import urlparse, parse_qs
 
+from app.dto.magnet import Magnet
 from app.dto.torrent_file import TorrentFile
 from app.peer import Peer
 from app.tracker import Tracker
@@ -40,3 +42,13 @@ def download(torrent_file: TorrentFile, piece_nr: int = None):
     finally:
         print("Closing connection")
         peer.socket.close()
+
+
+def parse_magnet_link(link: str):
+    """
+    Example of magnet link:
+    magnet:?xt=urn:btih:d69f91e6b2ae4c542468d1073a71d4ea13879a7f&dn=sample.torrent&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce
+    """
+    parsed = parse_qs(urlparse(link).query)
+    magnet = Magnet(parsed["xt"][0].replace("urn:btih:", ""), parsed["dn"][0], parsed["tr"][0])
+    return magnet

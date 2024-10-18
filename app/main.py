@@ -1,7 +1,7 @@
 import json
 import sys
 
-from app.client import download, save_file
+from app.client import download, save_file, parse_magnet_link
 from app.codec import decode_value
 from app.dto.torrent_file import TorrentFile
 from app.peer import Peer
@@ -11,7 +11,7 @@ from app.tracker import Tracker
 def main():
     # TODO smart argparse
     command = sys.argv[1]
-    commands = ["decode", "info", "peers", "handshake", "download_piece", "download"]
+    commands = ["decode", "info", "peers", "handshake", "download_piece", "download", "magnet_parse"]
 
     if command not in commands:
         raise NotImplementedError(f"Unknown command {command}")
@@ -64,6 +64,13 @@ def main():
 
         content = download(torrent_file)
         save_file(destination, content)
+
+    # ./your_bittorrent.sh magnet_parse magnet:?xt=urn:btih:d69f91e6b2ae4c542468d1073a71d4ea13879a7f&dn=sample.torrent&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce
+    if command == "magnet_parse":
+        magnet_link = sys.argv[2]
+        magnet = parse_magnet_link(magnet_link)
+        print(f"Tracker URL: {magnet.tracker}")
+        print(f"Info Hash: {magnet.info_hash}")
 
 
 if __name__ == "__main__":

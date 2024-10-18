@@ -58,3 +58,7 @@ class Request(Metadata):
     def __init__(self, peers_metadata_extension_id: int):
         self.payload = {'msg_type': 0, 'piece': 0}
         self.extension_message_id = peers_metadata_extension_id
+
+
+class Response(Metadata):
+    ...

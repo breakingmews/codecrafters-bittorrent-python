@@ -15,7 +15,7 @@ def parse_hashes(info):
     hashes = []
     start = 0
     while start < len(pieces) + hash_length:
-        hash_ = pieces[start : start + hash_length].hex()
+        hash_ = pieces[start: start + hash_length].hex()
         hashes.append(hash_)
         start += hash_length
     return "\n".join(hashes)
@@ -23,19 +23,19 @@ def parse_hashes(info):
 
 def main():
     command = sys.argv[1]
-    arg = sys.argv[2]
-    commands = ["decode", "info", "peers", "handshake"]
+    commands = ["decode", "info", "peers", "handshake", "download_piece"]
 
     if command not in commands:
         raise NotImplementedError(f"Unknown command {command}")
 
+    # ./your_bittorrent.sh decode d3:foo3:bar5:helloi52ee
     if command == "decode":
-        bencoded_value = arg
+        bencoded_value = sys.argv[2]
         decoded: str = decode_value(bencoded_value)
         print(json.dumps(decoded))
         return
 
-    filepath = arg
+    filepath = sys.argv[2]
     decoded: dict = decode_file(filepath)
 
     tracker = decoded[b"announce"].decode()
@@ -51,17 +51,24 @@ def main():
     print(f"Piece Length: {info[b"piece length"]}")
     print(f"Piece Hashes:\n{piece_hashes}")
 
+    # ./your_bittorrent.sh info sample.torrent
     if command == "info":
         return
 
+    # ./your_bittorrent.sh peers sample.torrent
     if command == "peers":
         peers = get_peers(tracker, sha1_info_hash_hex, length)
         print("\n".join(peers))
 
+    # ./your_bittorrent.sh handshake sample.torrent <peer_ip>:<peer_port>
     if command == "handshake":
         peer = sys.argv[3]
         handshake: Handshake = do_handshake(peer, sha1_info_hash)
         print(f"Peer ID: {handshake.peer_id}")
+
+    # ./your_bittorrent.sh download_piece -o /tmp/test-piece-0 sample.torrent 0
+    if command == "download_piece":
+        raise NotImplementedError(f"{command} not implemented")
 
 
 if __name__ == "__main__":

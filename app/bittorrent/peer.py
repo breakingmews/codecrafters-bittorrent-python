@@ -20,14 +20,14 @@ _log = logging.getLogger(__name__)
 
 class Peer:
     def __init__(self, peer: str):
-        self.address = Peer._get_address(peer)
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect(self.address)
-        _log.debug(f"Connected to peer: {self.address}")
+        self._address = Peer._get_address(peer)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.connect(self._address)
+        _log.debug(f"Connected to peer: {self._address}")
 
     def __del__(self):
         _log.info("Destroying peer. Closing connection")
-        self.socket.close()
+        self._socket.close()
 
     @staticmethod
     def _get_address(peer: str):
@@ -37,22 +37,22 @@ class Peer:
 
     def send(self, buffer: bytes) -> None:
         _log.debug(f"Sending: {buffer}")
-        self.socket.sendall(buffer)
+        self._socket.sendall(buffer)
 
     def receive(self):
-        length_prefix = self.socket.recv(4)
+        length_prefix = self._socket.recv(4)
         if PeerMessage.is_keep_alive(length_prefix):
             _log.debug("Received 'Keep alive'")
             return length_prefix
         length = struct.unpack("!I", length_prefix)[0]
-        buffer = self.socket.recv(length)
+        buffer = self._socket.recv(length)
         return length_prefix + buffer
 
     def request_block(self, request: Request) -> bytes:
         _log.debug(f"Request block: {request}")
-        self.socket.sendall(request.encode())
+        self._socket.sendall(request.encode())
 
-        response = self.socket.recv(request.block_size)
+        response = self._socket.recv(request.block_size)
         _log.debug(f"Chunk size: {len(response)}")
         if len(response) == 0:
             return b""
@@ -60,7 +60,7 @@ class Peer:
         block = piece.payload
 
         while True:
-            response = self.socket.recv(request.block_size)
+            response = self._socket.recv(request.block_size)
             _log.debug(f"Chunk size: {len(response)}")
             if PeerMessage.is_keep_alive(response):
                 _log.debug(response)
@@ -80,7 +80,7 @@ class Peer:
         )
         _log.debug(f"Handshake: {handshake}")
         self.send(handshake.encode())
-        response = self.socket.recv(68)
+        response = self._socket.recv(68)
         _log.debug(f"Handshake response length: {len(response)}")
         _log.debug(f"Handshake response: {response}")
 

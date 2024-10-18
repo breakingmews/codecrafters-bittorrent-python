@@ -9,7 +9,7 @@ from app.const import PEER_ID
 
 @dataclass
 class Handshake:
-    _buffer: tuple
+    buffer: tuple
     sha1_info_hash: bytes
     peer_id: str = PEER_ID
     _length: int = 19
@@ -18,7 +18,7 @@ class Handshake:
     def __init__(self, sha1_info_hash=None, peer_id=None, support_extension=False):
         self._length: int = 19
         self._protocol: str = "BitTorrent protocol"
-        self._buffer: tuple = (
+        self.buffer: tuple = (
             (0, 0, 0, 0, 0, 16, 0, 0) if support_extension else (0, 0, 0, 0, 0, 0, 0, 0)
         )
 
@@ -29,11 +29,11 @@ class Handshake:
 
     def encode(self):
         encoded = (
-            struct.pack("!B", self._length)
-            + self._protocol.encode()
-            + struct.pack("!BBBBBBBB", *self._buffer)
-            + self.sha1_info_hash
-            + self.peer_id.encode()
+                struct.pack("!B", self._length)
+                + self._protocol.encode()
+                + struct.pack("!BBBBBBBB", *self.buffer)
+                + self.sha1_info_hash
+                + self.peer_id.encode()
         )
         return encoded
 
@@ -42,6 +42,7 @@ class Handshake:
         handshake = Handshake()
         handshake.sha1_info_hash = buffer[28:48].hex()
         handshake.peer_id = buffer[48:68].hex()
+        handshake.buffer = struct.unpack("!BBBBBBBB", buffer[20:28])
         return handshake
 
 
@@ -81,7 +82,7 @@ class BitField(PeerMessage):
             return
 
         length, id_ = struct.unpack("!IB", buffer[:5])
-        payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5 : 5 + length])
+        payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5: 5 + length])
         bitfield = BitField(id_=id_, length=length, payload=payload)
         # print(f"Bitfield decoded: {bitfield}")
         return bitfield

@@ -17,25 +17,23 @@ class TorrentFile:
     piece_hashes: List[str] = []
 
     @staticmethod
-    def read(filepath: str):
+    def read(filepath: str) -> "TorrentFile":
         bc = bencodepy.Bencode()
         content = bc.read(filepath)
         print(f"Torrent filepath: {filepath}")
         print(f"Torrent file content: {content}")
-        return content
 
-    @staticmethod
-    def decode(content: dict) -> "TorrentFile":
         file = TorrentFile()
         file.content = content
-
-        file.tracker = content[b"announce"].decode()
-        file.info = content[b"info"]
-        file.length = file.info[b"length"]
-        file.sha1_info_hash = hashlib.sha1(bencodepy.encode(file.info)).digest()
-        file.piece_hashes = file._parse_hashes()
-
         return file
+
+    def decode(self) -> "TorrentFile":
+        self.tracker = self.content[b"announce"].decode()
+        self.info = self.content[b"info"]
+        self.length = self.info[b"length"]
+        self.sha1_info_hash = hashlib.sha1(bencodepy.encode(self.info)).digest()
+        self.piece_hashes = self._parse_hashes()
+        return self
 
     def __repr__(self):
         return (

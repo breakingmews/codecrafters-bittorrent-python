@@ -42,16 +42,13 @@ class TestMain(unittest.TestCase):
 
     def test_decode_file(self):
         filepath = "test.torrent"
-        content = TorrentFile.read(filepath)
-        self.assertEqual(dict, type(content))
+        file = TorrentFile.read(filepath)
+        self.assertEqual(dict, type(file.content))
 
     def test_parse_hashes(self):
         # arrange
         filepath = "test.torrent"
-        decoded = TorrentFile.read(filepath)
-        info = decoded[b"info"]
-        file = TorrentFile()
-        file.info = info
+        file = TorrentFile.read(filepath).decode()
 
         # act
         hashes = file._parse_hashes()

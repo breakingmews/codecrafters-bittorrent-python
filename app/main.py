@@ -22,7 +22,7 @@ def main():
 
     if command in ("info", "peers", "handshake"):
         filepath = sys.argv[2]
-        torrent_file = TorrentFile.decode(TorrentFile.read(filepath))
+        torrent_file = TorrentFile.read(filepath).decode()
         print(torrent_file)
 
         # ./your_bittorrent.sh info sample.torrent
@@ -50,6 +50,9 @@ def main():
         filepath = sys.argv[4]
         piece_nr = sys.argv[5]
         print(f"Piece nr: {piece_nr}")
+
+        torrent_file = TorrentFile.read(filepath).decode()
+        print(torrent_file)
         raise NotImplementedError(f"{command} not implemented")
 
 

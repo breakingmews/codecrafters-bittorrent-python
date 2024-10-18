@@ -1,46 +1,17 @@
 import json
-import random
 import sys
-import traceback
 
+from app.client import download, save_file
 from app.codec import decode_value
 from app.dto.torrent_file import TorrentFile
 from app.peer import Peer
 from app.tracker import Tracker
 
 
-def save_piece(destination: str, piece_block: bytes):
-    with open(destination, "wb") as f:
-        f.write(piece_block)
-    print(f"Wrote piece block to {destination}")
-
-
-def download_piece(destination: str, torrent_filepath: str, piece_nr: int):
-    print(f"{destination}, {torrent_filepath}, {piece_nr}")
-    torrent_file = TorrentFile(torrent_filepath)
-    print(f"\n{torrent_file}")
-
-    peers = Tracker.get_peers(torrent_file)
-    print(f"\nPeers:\n{"\n".join(peers)}")
-
-    peer = Peer(peers[random.randint(0, len(peers) - 1)])
-    try:
-        peer.shake_hands(torrent_file)
-        peer.receive_bitfield()
-        peer.send_interested()
-        piece = peer.request_piece(torrent_file, piece_nr)
-        save_piece(destination, piece)
-    except Exception:
-        print(f"Error: {traceback.format_exc()}")
-    finally:
-        print("Closing connection")
-        peer.socket.close()
-
-
 def main():
     # TODO smart argparse
     command = sys.argv[1]
-    commands = ["decode", "info", "peers", "handshake", "download_piece"]
+    commands = ["decode", "info", "peers", "handshake", "download_piece", "download"]
 
     if command not in commands:
         raise NotImplementedError(f"Unknown command {command}")
@@ -79,7 +50,20 @@ def main():
         filepath = sys.argv[4]
         piece_nr = int(sys.argv[5])
 
-        download_piece(destination, filepath, piece_nr)
+        torrent_file = TorrentFile(filepath)
+
+        content = download(torrent_file, piece_nr)
+        save_file(destination, content)
+
+    # ./your_bittorrent.sh download -o /tmp/test.txt sample.torrent
+    if command == "download":
+        destination = sys.argv[3]
+        filepath = sys.argv[4]
+
+        torrent_file = TorrentFile(filepath)
+
+        content = download(torrent_file)
+        save_file(destination, content)
 
 
 if __name__ == "__main__":

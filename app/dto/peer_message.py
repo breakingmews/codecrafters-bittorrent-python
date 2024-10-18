@@ -80,7 +80,7 @@ class PeerMessage:
 
     @staticmethod
     def is_bitfield(buffer) -> bool:
-        return buffer[4] == BitField.id_
+        return buffer and len(buffer) > 4 and (buffer[4] == BitField.id_)
 
 
 @dataclass

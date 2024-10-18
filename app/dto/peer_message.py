@@ -8,6 +8,11 @@ from app.const import PEER_ID
 
 
 @dataclass
+class ExtensionHandshake:
+    ...
+
+
+@dataclass
 class Handshake:
     buffer: tuple
     sha1_info_hash: bytes

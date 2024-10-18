@@ -2,7 +2,7 @@ import unittest
 
 import bencodepy
 
-from app.dto.peer_message import BitField, Handshake, Interested, Unchoke
+from app.dto.peer_message import BitField, Handshake, Interested, Unchoke, ExtensionHandshake
 from app.dto.torrent_file import Block, TorrentFile
 from app.main import decode_value
 from app.peer import Peer
@@ -157,6 +157,13 @@ class TestMain(unittest.TestCase):
         address = Peer._get_address(peer)
         expected = ("127.0.0.1", 43759)
         self.assertEqual(expected, address)
+
+    def test_decode_extensions_handshake(self):
+        buffer = b'\x00\x00\x00\x02\x05\xe0\x00\x00\x001\x14\x00d1:md11:ut_metadatai161ee13:metadata_sizei132ee'
+        # buffer = b'\x00\x001\x14\x00d1:md11:ut_metadatai248ee13:metadata_sizei132ee'
+
+        decoded = ExtensionHandshake.decode(buffer)
+        self.assertEqual(1, 2)
 
 
 if __name__ == "__main__":

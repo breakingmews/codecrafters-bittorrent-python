@@ -90,7 +90,11 @@ def main():
         print(f"Peers:\n{"\n".join(peers)}")
 
         peer = Peer(peers[random.randint(0, len(peers) - 1)])
-        handshake = peer.shake_hands(magnet.sha1_info_hash, support_extension=True)
+        handshake = peer.shake_hands(sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True)
+        # peer.receive_bitfield()
+        if handshake.supports_extensions:
+            extension_handshake = peer.send_extensions_handshake()
+            print(f"Extension handshake: {extension_handshake}")
         print(f"Peer ID: {handshake.peer_id}")
 
 

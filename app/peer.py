@@ -2,13 +2,11 @@ import socket
 
 from app.dto.peer_message import (
     BitField,
-    Handshake,
-    Interested,
+    Handshake, Interested, ExtensionHandshake,
     PeerMessage,
     Piece,
     Request,
-    Unchoke,
-)
+    Unchoke, )
 from app.dto.torrent_file import TorrentFile
 
 
@@ -71,9 +69,9 @@ class Peer:
 
         return block
 
-    def shake_hands(self, sha1_info_hash: str, support_extension=False) -> Handshake:
+    def shake_hands(self, sha1_info_hash: str, supports_extensions=False) -> Handshake:
         handshake = Handshake(
-            sha1_info_hash=sha1_info_hash, support_extension=support_extension
+            sha1_info_hash=sha1_info_hash, supports_extensions=supports_extensions
         )
         # print(f"Handshake: {handshake}")
         response = self.send(handshake.encode(), 68)
@@ -84,6 +82,13 @@ class Peer:
         # print(f"Handshake decoded: {decoded}")
         # print(f"\nPeer ID: {handshake.peer_id}")
 
+        return decoded
+
+    def send_extensions_handshake(self):
+        handshake = ExtensionHandshake()
+        response = self.send(handshake.encode())
+        print(f"Extensions Handshake response: {response}")
+        decoded: ExtensionHandshake = ExtensionHandshake.decode(response)
         return decoded
 
     def send_interested(self) -> Unchoke:
@@ -97,7 +102,9 @@ class Peer:
 
     def receive_bitfield(self):
         bitfield_bytes = self.wait(BitField)
+        # print(f"Received Bitfield: {bitfield_bytes}")
         bitfield: BitField = BitField.decode(bitfield_bytes)
+        # print(f"Received Bitfield: {bitfield}")
         return bitfield
 
     def request_piece(self, torrent_file: TorrentFile, piece_nr: int) -> bytes:

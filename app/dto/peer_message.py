@@ -64,7 +64,7 @@ class PeerMessage:
 
     @staticmethod
     def is_keep_alive(buffer) -> bool:
-        return len(buffer) == 0
+        return len(buffer) == 0 or buffer == b"\x00\x00\x00\x00"
 
 
 @dataclass
@@ -115,20 +115,25 @@ class Unchoke(PeerMessage):
 class Request(PeerMessage):
     id_ = 6  # 1 byte
 
+    length = 1 + 4 + 4 + 4
     index: int = 0  # 4 bytes
     begin: int = 0  # 4 bytes
-    length_: int = 16 * 1024  # 4 bytes
 
-    def __init__(self, index: int, begin: int, length_: int):
+    block_size: int = 16 * 1024  # 4 bytes
+
+    def __init__(self, index: int, begin: int, block_size: int):
         self.index = index
         self.begin = begin
-        self.length_ = length_
+        self.block_size = block_size
 
     def encode(self):
         encoded = struct.pack(
-            "!IBIII", self.length, self.id_, self.index, self.begin, self.length_
+            "!IBIII", self.length, self.id_, self.index, self.begin, self.block_size
         )
         return encoded
+
+    def __repr__(self):
+        return f"length={self.length}, id_={self.id_}, index={self.index}, begin={self.begin}, block_size={self.block_size}"
 
 
 class Piece(PeerMessage):
@@ -136,3 +141,21 @@ class Piece(PeerMessage):
     index: int  # 4 bytes
     begin: int  # 4 bytes
     block: bytes
+
+    def __init__(self, length, id_, index, begin, payload):
+        self.length = length
+        self.id_ = id_
+        self.index = index
+        self.begin = begin
+        self.payload = payload
+
+    def __repr__(self):
+        return f"length={self.length}, id_={self.id_}, index={self.index}, begin={self.begin}"
+
+    @staticmethod
+    def decode(buffer: bytes):
+        length, id_, index, begin = struct.unpack("!IBII", buffer[:13])
+        payload = buffer[13:]
+        piece = Piece(length=length, id_=id_, index=index, begin=begin, payload=payload)
+        print(f"Decoded Piece: {piece}")
+        return piece

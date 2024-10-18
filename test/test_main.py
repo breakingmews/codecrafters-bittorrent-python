@@ -1,6 +1,6 @@
 import unittest
 
-from app.dto.peer_message import BitField, Handshake, Interested, Request, Unchoke
+from app.dto.peer_message import BitField, Handshake, Interested, Unchoke
 from app.dto.torrent_file import TorrentFile
 from app.main import decode_value
 from app.peer import Peer
@@ -116,10 +116,6 @@ class TestMain(unittest.TestCase):
         decoded = Unchoke.decode(buffer)
         expected = Unchoke(id_=1, length=1)
         self.assertEqual(expected, decoded)
-
-    def test_encode_request(self):
-        request = Request(index=0, begin=0, length_=1000)
-        print()
 
     def test_get_address(self):
         peer = "127.0.0.1:43759"

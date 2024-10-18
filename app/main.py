@@ -25,17 +25,10 @@ def download_piece(destination: str, torrent_filepath: str, piece_nr: int):
 
     peer = Peer(peers[random.randint(0, len(peers) - 1)])
     try:
-        handshake, bitfield = peer.shake_hands(torrent_file)
-        print(f"\nPeer ID: {handshake.peer_id}")
-
+        peer.shake_hands(torrent_file)
         peer.interested()
-
-        """
-        blocks = peer.request_piece(torrent_file, piece_nr)
-        print(f"Piece: {blocks}")
-
-        save_piece(destination, b"\n".join(blocks))
-        """
+        piece = peer.request_piece(torrent_file, piece_nr)
+        save_piece(destination, piece)
     except Exception:
         print(f"Error: {traceback.format_exc()}")
     finally:

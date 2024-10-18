@@ -1,8 +1,10 @@
 import logging
 import random
+from typing import Tuple
 from urllib.parse import parse_qs, urlparse
 
-from app.dto.magnet import Magnet
+from app.dto.magnet import Magnet, ExtensionHandshake
+from app.dto.peer_message import Handshake
 from app.dto.torrent_file import TorrentFile
 from app.peer import Peer
 from app.tracker import Tracker
@@ -18,7 +20,7 @@ def save_file(destination: str, content: bytes):
 
 def download(torrent_file: TorrentFile, piece_nr: int = None, peer: Peer = None):
     if not peer:
-        _log.debug(f"\n{torrent_file}")
+        _log.debug(f"{torrent_file}")
         peers = Tracker.get_peers(torrent_file)
         _log.debug(f"\nPeers:\n{"\n".join(peers)}")
 
@@ -51,3 +53,69 @@ def parse_magnet_link(link: str):
     tracker = parsed["tr"][0]
     magnet = Magnet(info_hash, filename, tracker)
     return magnet
+
+
+def magnet_info(magnet_link: str) -> TorrentFile:
+    magnet = parse_magnet_link(magnet_link)
+    peers = Tracker.get_peers_from_magnet(magnet)
+
+    peer = Peer(peers[random.randint(0, len(peers) - 1)])
+    handshake = peer.shake_hands(
+        sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True
+    )
+    _log.debug(f"Handshake: {handshake}")
+
+    metadata = None
+    if handshake.supports_extensions:
+        extension_handshake = peer.send_extensions_handshake()
+        _log.debug(f"Extension handshake: {extension_handshake}")
+
+        peers_metadata_extension_id = (
+            extension_handshake.peers_metadata_extension_id
+        )
+        metadata = peer.request_metadata(peers_metadata_extension_id)
+    torrent_file = TorrentFile.from_metadata(magnet, metadata)
+
+    return torrent_file
+
+
+def magnet_handshake(magnet_link: str) -> Tuple[Handshake, ExtensionHandshake]:
+    magnet = parse_magnet_link(magnet_link)
+    peers = Tracker.get_peers_from_magnet(magnet)
+
+    peer = Peer(peers[random.randint(0, len(peers) - 1)])
+    handshake = peer.shake_hands(
+        sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True
+    )
+    _log.debug(f"Handshake: {handshake}")
+
+    extension_handshake = None
+    if handshake.supports_extensions:
+        extension_handshake = peer.send_extensions_handshake()
+        _log.debug(f"Extension handshake: {extension_handshake}")
+
+    return handshake, extension_handshake
+
+
+def magnet_download(destination, magnet_link, piece_nr):
+    magnet = parse_magnet_link(magnet_link)
+    peers = Tracker.get_peers_from_magnet(magnet)
+
+    peer = Peer(peers[random.randint(0, len(peers) - 1)])
+    handshake = peer.shake_hands(
+        sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True
+    )
+    _log.debug(f"Handshake: {handshake}")
+
+    if handshake.supports_extensions:
+        extension_handshake = peer.send_extensions_handshake()
+        peer.send_interested()
+        peers_metadata_extension_id = (
+            extension_handshake.peers_metadata_extension_id
+        )
+
+        metadata = peer.request_metadata(peers_metadata_extension_id)
+        torrent_file = TorrentFile.from_metadata(magnet, metadata)
+
+        content = download(torrent_file=torrent_file, piece_nr=piece_nr, peer=peer)
+        save_file(destination, content)

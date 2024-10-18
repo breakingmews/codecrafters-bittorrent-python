@@ -1,6 +1,7 @@
 import json
 import sys
 import bencodepy
+import hashlib
 
 
 def decode_value(bencoded_value):
@@ -11,8 +12,13 @@ def decode_value(bencoded_value):
 def decode_file(filepath: str):
     bc = bencodepy.Bencode()
     content = bc.read(filepath)
-    # print(content)
+    print(content)
     return content
+
+
+def calculate_hash(info):
+    encoded = bencodepy.encode(info)
+    return hashlib.sha1(encoded).hexdigest()
 
 
 def main():
@@ -27,10 +33,12 @@ def main():
         print(json.dumps(decoded))
     elif command == "info":
         filepath =  sys.argv[2]
-        # print(read_file(filepath))
         decoded: dict = decode_file(filepath)
+        info = decoded[b"info"]
+        hash_ = calculate_hash(info)
         print(f"Tracker URL: {decoded[b"announce"].decode()}")
-        print(f"Length: {decoded[b"info"][b"length"]}")
+        print(f"Length: {info[b"length"]}")
+        print(f"Info Hash: {hash_}")
 
 
 

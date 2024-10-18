@@ -22,3 +22,6 @@ ruff = "*"
 
 [requires]
 python_version = "3.12"
+
+[scripts]
+test = "python -m unittest discover -s test/unit -v"

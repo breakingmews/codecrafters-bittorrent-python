@@ -1,10 +1,9 @@
 import struct
-from dataclasses import dataclass
-from dataclasses import field
+from dataclasses import dataclass, field
 
 import bencodepy
 
-from app.dto.peer_message import BitField
+from app.dto.peer_message import BitField, PeerMessage
 
 
 @dataclass
@@ -27,14 +26,19 @@ class Extension:
     def encode(self) -> bytes:
         payload_encoded = bencodepy.encode(self.payload)
         extension_length = 1 + 1 + len(payload_encoded)
-        extension_encoded = struct.pack("!I", extension_length) + struct.pack("!BB", self.id_,
-                                                                              self.extension_message_id) + payload_encoded
+        extension_encoded = (
+            struct.pack("!I", extension_length)
+            + struct.pack("!BB", self.id_, self.extension_message_id)
+            + payload_encoded
+        )
         return extension_encoded
 
     @staticmethod
     def decode(buffer: bytes):
-        bitfield = BitField.decode(buffer)
-        ext_buffer = buffer[4 + bitfield.length:]
+        ext_buffer = buffer
+        if PeerMessage.is_bitfield(buffer):
+            bitfield = BitField.decode(buffer)
+            ext_buffer = buffer[4 + bitfield.length :]
         extension = Extension()
         extension.length = struct.unpack("!I", ext_buffer[:4])[0]
         extension.id_ = struct.unpack("!B", ext_buffer[4:5])[0]
@@ -49,15 +53,30 @@ class ExtensionHandshake(Extension):
         self.payload = {"m": {"ut_metadata": 16}}
 
 
-class Metadata(Extension):
-    ...
+class Metadata(Extension): ...
 
 
 class Request(Metadata):
     def __init__(self, peers_metadata_extension_id: int):
-        self.payload = {'msg_type': 0, 'piece': 0}
+        self.payload = {"msg_type": 0, "piece": 0}
         self.extension_message_id = peers_metadata_extension_id
 
 
-class Response(Metadata):
-    ...
+class Data(Metadata):
+    @staticmethod
+    def decode(buffer: bytes):
+        ext_buffer = buffer
+        if PeerMessage.is_bitfield(buffer):
+            bitfield = BitField.decode(buffer)
+            ext_buffer = buffer[4 + bitfield.length :]
+
+        data = Data()
+        data.length = struct.unpack("!I", ext_buffer[:4])[0]
+        data.id_ = struct.unpack("!B", ext_buffer[4:5])[0]
+        data.extension_message_id = struct.unpack("!B", ext_buffer[5:6])[0]
+
+        splitted = ext_buffer[6:].split(b"eed")
+        first: dict = bencodepy.decode(splitted[0] + b"ee")
+        second: dict = bencodepy.decode(b"d" + splitted[1])
+        data.payload = dict((*first.items(), *second.items()))
+        return data

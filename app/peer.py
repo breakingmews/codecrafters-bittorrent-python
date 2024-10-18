@@ -1,13 +1,16 @@
 import socket
 
-from app.dto.magnet import ExtensionHandshake, Request as ExtensionRequest
+from app.dto.magnet import Data, ExtensionHandshake
+from app.dto.magnet import Request as ExtensionRequest
 from app.dto.peer_message import (
     BitField,
-    Handshake, Interested,
+    Handshake,
+    Interested,
     PeerMessage,
     Piece,
     Request,
-    Unchoke, )
+    Unchoke,
+)
 from app.dto.torrent_file import TorrentFile
 
 
@@ -88,14 +91,16 @@ class Peer:
     def send_extensions_handshake(self):
         handshake = ExtensionHandshake()
         response = self.send(handshake.encode())
-        print(f"Extensions Handshake response: {response}")
+        # print(f"Extensions Handshake response: {response}")
         decoded: ExtensionHandshake = ExtensionHandshake.decode(response)
         return decoded
 
-    def send_request_extension(self, peers_metadata_extension_id: int):
+    def request_metadata(self, peers_metadata_extension_id: int):
         request = ExtensionRequest(peers_metadata_extension_id)
         response = self.send(request.encode())
-        print(f"Extension Request response: {response}")
+        # print(f"Metadata response: {response}")
+        decoded: Data = Data.decode(response)
+        return decoded
 
     def send_interested(self) -> Unchoke:
         # print("\nSending Interested")

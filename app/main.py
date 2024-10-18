@@ -21,7 +21,7 @@ def main():
         "download",
         "magnet_parse",
         "magnet_handshake",
-        "magnet_info"
+        "magnet_info",
     ]
 
     if command not in commands:
@@ -36,7 +36,7 @@ def main():
 
     if command in ("info", "peers", "handshake"):
         filepath = sys.argv[2]
-        torrent_file = TorrentFile(filepath)
+        torrent_file = TorrentFile.from_file(filepath)
         print(torrent_file)
 
         # ./your_bittorrent.sh info sample.torrent
@@ -61,7 +61,7 @@ def main():
         filepath = sys.argv[4]
         piece_nr = int(sys.argv[5])
 
-        torrent_file = TorrentFile(filepath)
+        torrent_file = TorrentFile.from_file(filepath)
 
         content = download(torrent_file, piece_nr)
         save_file(destination, content)
@@ -71,7 +71,7 @@ def main():
         destination = sys.argv[3]
         filepath = sys.argv[4]
 
-        torrent_file = TorrentFile(filepath)
+        torrent_file = TorrentFile.from_file(filepath)
 
         content = download(torrent_file)
         save_file(destination, content)
@@ -88,20 +88,27 @@ def main():
         magnet_link = sys.argv[2]
         magnet = parse_magnet_link(magnet_link)
         peers = Tracker.get_peers_from_magnet(magnet)
-        print(f"Peers:\n{"\n".join(peers)}")
 
         peer = Peer(peers[random.randint(0, len(peers) - 1)])
-        handshake = peer.shake_hands(sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True)
-        print(f"Peer ID: {handshake.peer_id}")
+        handshake = peer.shake_hands(
+            sha1_info_hash=magnet.sha1_info_hash, supports_extensions=True
+        )
 
         if handshake.supports_extensions:
             extension_handshake = peer.send_extensions_handshake()
-            peers_metadata_extension_id = extension_handshake.payload[b"m"][b"ut_metadata"]
-            print(f"Extension handshake: {extension_handshake}")
-            print(f"Peer Metadata Extension ID: {peers_metadata_extension_id}")
+            peers_metadata_extension_id = extension_handshake.payload[b"m"][
+                b"ut_metadata"
+            ]
+            # print(f"Extension handshake: {extension_handshake}")
+            if command == "magnet_handshake":
+                print(f"Peer Metadata Extension ID: {peers_metadata_extension_id}")
+                print(f"Peer ID: {handshake.peer_id}")
+                print(f"Peers:\n{"\n".join(peers)}")
 
             if command == "magnet_info":
-                peer.send_request_extension(peers_metadata_extension_id)
+                metadata = peer.request_metadata(peers_metadata_extension_id)
+                torrent_file = TorrentFile.from_metadata(magnet, metadata)
+                print(torrent_file)
 
 
 if __name__ == "__main__":

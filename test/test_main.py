@@ -2,7 +2,7 @@ import unittest
 
 import bencodepy
 
-from app.dto.magnet import ExtensionHandshake
+from app.dto.magnet import Data, ExtensionHandshake
 from app.dto.peer_message import BitField, Handshake, Interested, Unchoke
 from app.dto.torrent_file import Block, TorrentFile
 from app.main import decode_value
@@ -62,7 +62,7 @@ class TestMain(unittest.TestCase):
         filepath = "test.torrent"
 
         # act
-        file = TorrentFile(filepath)
+        file = TorrentFile.from_file(filepath)
         info_hash = "1cad4a486798d952614c394eb15e75bec587fd08"
         sha1_info_hash = b"\x1c\xadJHg\x98\xd9RaL9N\xb1^u\xbe\xc5\x87\xfd\x08"
 
@@ -98,7 +98,7 @@ class TestMain(unittest.TestCase):
         filepath = "congratulations.torrent"
 
         # act
-        file = TorrentFile(filepath)
+        file = TorrentFile.from_file(filepath)
 
         # assert
         expected_piece_sizes = 3 * [262144] + [34460]
@@ -160,14 +160,16 @@ class TestMain(unittest.TestCase):
         self.assertEqual(expected, address)
 
     def test_decode_extensions_handshake(self):
-        buffer = b'\x00\x00\x00\x02\x05\xe0\x00\x00\x001\x14\x00d1:md11:ut_metadatai161ee13:metadata_sizei132ee'
+        buffer = b"\x00\x00\x00\x02\x05\xe0\x00\x00\x001\x14\x00d1:md11:ut_metadatai161ee13:metadata_sizei132ee"
         # buffer = b'\x00\x001\x14\x00d1:md11:ut_metadatai248ee13:metadata_sizei132ee'
 
         decoded = ExtensionHandshake.decode(buffer)
         self.assertEqual(1, 2)
 
-    def test_decode_request_extension_response(self):
-        buffer = b'\x00\x00\x00\xb1\x14\x10d8:msg_typei1e5:piecei0e10:total_sizei132eed6:lengthi636505e4:name11:magnet1.gif12:piece lengthi262144e6:pieces60:;F\xa9m\x9b\xc3qm\x1bu\xda\x91\xe6\xd7S\xa7\x93\xad\x1c\xef\xed\xa4\x17\xcb\\\x1c\xdb\xf8A\x12\\A-\xa0\xbe\xc9\xdb\x83\x01\xf3B/E\xb1\x05.-E\xda>*e\x16\xe1\xbb\x1f\x1d\xb0\x073e'
+    def test_decode_metadata_response(self):
+        buffer = b"\x00\x00\x00\xb1\x14\x10d8:msg_typei1e5:piecei0e10:total_sizei132eed6:lengthi636505e4:name11:magnet1.gif12:piece lengthi262144e6:pieces60:;F\xa9m\x9b\xc3qm\x1bu\xda\x91\xe6\xd7S\xa7\x93\xad\x1c\xef\xed\xa4\x17\xcb\\\x1c\xdb\xf8A\x12\\A-\xa0\xbe\xc9\xdb\x83\x01\xf3B/E\xb1\x05.-E\xda>*e\x16\xe1\xbb\x1f\x1d\xb0\x073e"
+        metadata: Data = Data.decode(buffer)
+        self.assertEqual(dict, type(metadata.payload))
 
 
 if __name__ == "__main__":

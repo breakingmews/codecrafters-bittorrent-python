@@ -5,6 +5,8 @@ from typing import List
 
 import bencodepy
 
+from app.dto.magnet import Data, Magnet
+
 
 @dataclass
 class Block:
@@ -49,21 +51,45 @@ class TorrentFile:
     content: bytes
     pieces: List[Piece]
 
-    def __init__(self, filepath: str):
+    @staticmethod
+    def from_file(filepath: str) -> "TorrentFile":
         bc = bencodepy.Bencode()
         content = bc.read(filepath)
         print(f"Torrent filepath: {filepath}")
         print(f"Torrent file content: {content}")
 
-        self.content = content
-        self.pieces = self._parse_pieces()
+        file = TorrentFile()
+        file.content = content
+        file.pieces = file._parse_pieces()
+        return file
+
+    @staticmethod
+    def from_metadata(magnet: Magnet, metadata: Data) -> "TorrentFile":
+        # print(f"Magnet: {magnet}")
+        # print(f"Metadata: {metadata}")
+
+        content = {
+            b"announce": bytes(magnet.tracker, encoding="utf-8"),
+            b"info": {
+                b"sha1_info_hash": magnet.sha1_info_hash,
+                # TODO workaround for hash from magnet link instead of calculated from actual info
+                b"length": metadata.payload[b"length"],
+                b"piece length": metadata.payload[b"piece length"],
+                b"pieces": metadata.payload[b"pieces"],
+            },
+        }
+
+        file = TorrentFile()
+        file.content = content
+        file.pieces = file._parse_pieces()
+        return file
 
     @property
     def tracker(self):
         return self.content[b"announce"].decode()
 
     @property
-    def info(self):
+    def info(self) -> dict:
         return self.content[b"info"]
 
     @property
@@ -76,15 +102,17 @@ class TorrentFile:
 
     @property
     def sha1_info_hash(self):
+        if b"sha1_info_hash" in self.info.keys():
+            return self.info[b"sha1_info_hash"]
         return hashlib.sha1(bencodepy.encode(self.info)).digest()
 
     def __repr__(self):
         return (
-            f"Tracker URL: {self.tracker}\n"
-            + f"Length: {self.length}\n"
-            + f"Info Hash: {self.sha1_info_hash.hex()}\n"
-            + f"Piece Length: {self.piece_length}\n"
-            + f"Piece Hashes:\n{"\n".join(piece.hash_ for piece in self.pieces)}"
+                f"Tracker URL: {self.tracker}\n"
+                + f"Length: {self.length}\n"
+                + f"Info Hash: {self.sha1_info_hash.hex()}\n"
+                + f"Piece Length: {self.piece_length}\n"
+                + f"Piece Hashes:\n{"\n".join(piece.hash_ for piece in self.pieces)}"
         )
 
     def _parse_pieces(self) -> [str]:
@@ -93,7 +121,7 @@ class TorrentFile:
         hashes = []
         start = 0
         while start < len(pieces_bytes) + hash_length:
-            hash_ = pieces_bytes[start : start + hash_length].hex()
+            hash_ = pieces_bytes[start: start + hash_length].hex()
             if hash_:
                 hashes.append(hash_)
             start += hash_length

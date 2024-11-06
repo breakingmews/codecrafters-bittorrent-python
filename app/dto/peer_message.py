@@ -90,10 +90,6 @@ class BitField(PeerMessage):
     @staticmethod
     def decode(buffer: bytes):
         _log.debug(f"Decoding BitField: {buffer}")
-        if PeerMessage.is_keep_alive(buffer):
-            _log.warning(f"Expected Bitfield, received KeepAlive: {buffer}")
-            return
-
         length, id_ = struct.unpack("!IB", buffer[:5])
         payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5 : 5 + length])
         bitfield = BitField(id_=id_, length=length, payload=payload)

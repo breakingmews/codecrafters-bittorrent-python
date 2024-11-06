@@ -33,9 +33,6 @@ class TestPeerMessages(unittest.TestCase):
         expected = b"\x00\x00\x00\x01\x02"
         self.assertEqual(expected, encoded)
 
-    @unittest.skip("Not implemented")
-    def test_parse_handshake_response(self):
-        response = b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x04\xc7x)\xd2\xa7}e\x16\xf8\x8c\xd7\xa3\xde\x1a&\xab\xcb\xfa\xb0\xdb-RN0.0.0-\xcaBQ\xd1\x916\xb3\xf7x;\x89\x00\x00\x00\x03\x05\xff\xf0"
 
     def test_decode_unchoke(self):
         buffer = b"\x00\x00\x00\x01\x01"
@@ -43,10 +40,8 @@ class TestPeerMessages(unittest.TestCase):
         expected = Unchoke(id_=1, length=1)
         self.assertEqual(expected, decoded)
 
-    @unittest.skip("Not implemented")
     def test_decode_extensions_handshake(self):
-        buffer = b"\x00\x00\x00\x02\x05\xe0\x00\x00\x001\x14\x00d1:md11:ut_metadatai161ee13:metadata_sizei132ee"
-        # buffer = b'\x00\x001\x14\x00d1:md11:ut_metadatai248ee13:metadata_sizei132ee'
+        buffer = b"\x00\x00\x001\x14\x00d1:md11:ut_metadatai161ee13:metadata_sizei132ee"
         decoded = ExtensionHandshake.decode(buffer)
 
         self.assertEqual(decoded.extension_message_id, 0)

@@ -12,5 +12,5 @@ pipenv install
 # Usage
 
 ```shell
-./your_bittorrent.sh -h
+./bittorrent.sh -h
 ```

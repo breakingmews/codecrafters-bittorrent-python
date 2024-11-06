@@ -12,7 +12,7 @@ def parse_args() -> Namespace:
     Torrent Files
     """
     parser = argparse.ArgumentParser(
-        description="BitTorrent Client", prog="./your_bittorrent.sh"
+        description="BitTorrent Client", prog="./bittorrent.sh"
     )
     parser.add_argument("-v", dest="verbose", action="store_true", help="verbose output")
     subparsers = parser.add_subparsers(dest="command")
@@ -20,22 +20,22 @@ def parse_args() -> Namespace:
     parser_decode = subparsers.add_parser("decode", help="d3:foo3:bar5:helloi52ee")
     parser_decode.add_argument("bencoded_value", type=str)
 
-    parser_info = subparsers.add_parser("info", help="sample.torrent")
+    parser_info = subparsers.add_parser("info", help="./data/sample.torrent")
     parser_info.add_argument("torrent_filepath", type=str)
 
-    parser_peers = subparsers.add_parser("peers", help="sample.torrent")
+    parser_peers = subparsers.add_parser("peers", help="./data/sample.torrent")
     parser_peers.add_argument("torrent_filepath", type=str)
 
     parser_handshake = subparsers.add_parser(
         "handshake",
-        help="sample.torrent <peer_ip>:<peer_port>",
+        help="./data/sample.torrent <peer_ip>:<peer_port>",
     )
     parser_handshake.add_argument("torrent_filepath", type=str)
     parser_handshake.add_argument("peer_address", type=str)
 
     parser_download_piece = subparsers.add_parser(
         "download_piece",
-        help="-o /tmp/test-piece-0 sample.torrent 0",
+        help="-o /tmp/test-piece-0 ./data/sample.torrent 0",
     )
     parser_download_piece.add_argument(
         "-o", dest="destination", type=str, default=default_filename()
@@ -45,7 +45,7 @@ def parse_args() -> Namespace:
 
     parser_download = subparsers.add_parser(
         "download",
-        help="-o /tmp/test-piece-0 sample.torrent",
+        help="-o /tmp/test-piece-0 ./data/sample.torrent",
     )
     parser_download.add_argument(
         "-o", dest="destination", type=str, default=default_filename()

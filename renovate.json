@@ -1,0 +1,22 @@
+{
+  "extends": ["config:best-practices"],
+  "branchPrefix": "test-renovate/",
+  "gitAuthor": "Renovate Bot <bot@renovateapp.com>",
+  "forkProcessing": "enabled",
+  "repositories": ["breakingmews/codecrafters-bittorrent-python"],
+  "packageRules": [
+    {
+      "description": "lockFileMaintenance",
+      "matchUpdateTypes": [
+        "pin",
+        "digest",
+        "patch",
+        "minor",
+        "major",
+        "lockFileMaintenance"
+      ],
+      "dependencyDashboardApproval": false,
+      "minimumReleaseAge": "0"
+    }
+  ]
+}

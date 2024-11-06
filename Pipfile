@@ -18,3 +18,7 @@ python_version = "3.13"
 
 [scripts]
 test = "python -m unittest discover -s test/unit -v"
+pre-commit-format = "ruff format --check"
+format = "ruff format"
+pre-commit-fix = "ruff check --extend-select I"
+fix = "ruff check --extend-select I --fix"

@@ -33,7 +33,6 @@ class TestPeerMessages(unittest.TestCase):
         expected = b"\x00\x00\x00\x01\x02"
         self.assertEqual(expected, encoded)
 
-
     def test_decode_unchoke(self):
         buffer = b"\x00\x00\x00\x01\x01"
         decoded = Unchoke.decode(buffer)

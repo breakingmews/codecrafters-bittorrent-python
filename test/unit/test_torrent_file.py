@@ -19,8 +19,6 @@ class TestTorrentFile(unittest.TestCase):
 
         # act
         file = TorrentFile.from_file(filepath)
-        info_hash = "1cad4a486798d952614c394eb15e75bec587fd08"
-        sha1_info_hash = b"\x1c\xadJHg\x98\xd9RaL9N\xb1^u\xbe\xc5\x87\xfd\x08"
 
         # assert
         self.assertEqual(dict, type(file.content))

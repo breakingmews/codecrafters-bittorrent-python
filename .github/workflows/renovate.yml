@@ -1,0 +1,22 @@
+name: Renovate
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v40.2.8
+        with:
+          renovate-version: full
+          configurationFile: renovate.json
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          LOG_LEVEL: 'debug'

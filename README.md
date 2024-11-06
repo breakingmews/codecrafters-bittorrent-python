@@ -10,6 +10,11 @@ Install dependencies, including development ones.
 pipenv install --dev
 ```
 
+Install pre-commit hooks
+```sh
+pipenv run pre-commit install --install-hooks
+```
+
 # Features
 
 - Decode bencoded value

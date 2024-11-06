@@ -36,7 +36,7 @@ class Peer:
         return address
 
     def send(self, buffer: bytes) -> None:
-        _log.debug(f"Sending: {buffer}")
+        _log.debug(f"Sending: {buffer!r}")
         self._socket.sendall(buffer)
 
     def receive(self):
@@ -84,7 +84,7 @@ class Peer:
         self.send(handshake.encode())
         response = self._socket.recv(68)
         _log.debug(f"Handshake response length: {len(response)}")
-        _log.debug(f"Handshake response: {response}")
+        _log.debug(f"Handshake response: {response!r}")
 
         decoded: Handshake = Handshake.decode(response)
         _log.debug(f"Handshake decoded: {decoded}")
@@ -92,12 +92,12 @@ class Peer:
 
         return decoded
 
-    def send_extensions_handshake(self):
+    def send_extensions_handshake(self) -> ExtensionHandshake:
         handshake = ExtensionHandshake().encode()
-        _log.debug(f"Sending Extensions Handshake: {handshake}")
+        _log.debug(f"Sending Extensions Handshake: {handshake!r}")
         self.send(handshake)
         response = self.receive()
-        _log.debug(f"Extensions Handshake response: {response}")
+        _log.debug(f"Extensions Handshake response: {response!r}")
         decoded: ExtensionHandshake = ExtensionHandshake.decode(response)
         return decoded
 

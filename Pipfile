@@ -3,15 +3,20 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[pipenv]
+sort_pipfile = true
+
 [packages]
 "bencode.py" = "*"
-requests = "*"
 bitstruct = "*"
+requests = "*"
 tqdm = "*"
 
 [dev-packages]
-ruff = "*"
+flake8 = "*"
+mypy = "*"
 pre-commit = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.13"
@@ -22,3 +27,5 @@ pre-commit-format = "ruff format --check"
 format = "ruff format"
 pre-commit-fix = "ruff check --extend-select I"
 fix = "ruff check --extend-select I --fix"
+stylecheck = "flake8 . --max-line-length 99 --extend-ignore E203"
+typecheck = "mypy . --ignore-missing-imports --check-untyped-defs"

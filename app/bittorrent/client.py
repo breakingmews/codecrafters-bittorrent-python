@@ -1,6 +1,6 @@
 import logging
 import random
-from typing import Tuple
+from typing import Optional, Tuple
 from urllib.parse import parse_qs, urlparse
 
 from app.bittorrent.peer import Peer
@@ -18,7 +18,11 @@ def save_file(destination: str, content: bytes):
     _log.info(f"Wrote file to {destination} - {len(content)} bytes")
 
 
-def download(torrent_file: TorrentFile, piece_nr: int = None, peer: Peer = None):
+def download(
+    torrent_file: TorrentFile,
+    piece_nr: Optional[int] = None,
+    peer: Optional[Peer] = None,
+):
     if not peer:
         _log.debug(f"{torrent_file}")
         peers = Tracker.get_peers(torrent_file)
@@ -62,7 +66,7 @@ class MagnetClient:
         peers = Tracker.get_peers_from_magnet(self.magnet)
         self.peer = Peer(peers[random.randint(0, len(peers) - 1)])
 
-    def do_handshake(self) -> Tuple[Handshake, ExtensionHandshake]:
+    def do_handshake(self) -> Tuple[Handshake, ExtensionHandshake | None]:
         handshake = self.peer.shake_hands(
             sha1_info_hash=self.magnet.sha1_info_hash, supports_extensions=True
         )
@@ -79,7 +83,7 @@ class MagnetClient:
 
     def info(self) -> TorrentFile:
         _, extension_handshake = self.do_handshake()
-        peers_metadata_extension_id = extension_handshake.peers_metadata_extension_id
+        peers_metadata_extension_id = extension_handshake.peers_metadata_extension_id  # type: ignore  # noqa
         metadata = self.peer.request_metadata(peers_metadata_extension_id)
         torrent_file = TorrentFile.from_metadata(self.magnet, metadata)
 

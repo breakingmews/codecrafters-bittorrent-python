@@ -51,7 +51,8 @@ class ExtensionHandshake(Extension):
         self.payload = {"m": {"ut_metadata": 16}}
 
 
-class Metadata(Extension): ...
+class Metadata(Extension):
+    pass
 
 
 class Request(Metadata):

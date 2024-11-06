@@ -2,7 +2,7 @@ import hashlib
 import logging
 import math
 from dataclasses import dataclass
-from typing import List
+from typing import Any, List
 
 import bencodepy
 
@@ -51,7 +51,7 @@ class Piece:
 
 
 class TorrentFile:
-    content: bytes
+    content: dict[bytes, Any]
     pieces: List[Piece]
 
     @staticmethod
@@ -118,7 +118,7 @@ class TorrentFile:
             + f"Piece Hashes:\n{"\n".join(piece.hash_ for piece in self.pieces)}"
         )
 
-    def _parse_pieces(self) -> [str]:
+    def _parse_pieces(self) -> List[Piece]:
         pieces_bytes: bytes = self.info[b"pieces"]
         hash_length = 20
         hashes = []

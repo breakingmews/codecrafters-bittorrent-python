@@ -9,6 +9,15 @@ repos:
       name: format
       entry: bash -c 'pipenv run pre-commit-format'
       language: system
+    - id: stylecheck
+      name: stylecheck
+      entry: bash -c 'pipenv run stylecheck'
+      language: system
+    - id: typecheck
+      name: typecheck
+      entry: bash -c 'pipenv run typecheck'
+      language: system
+      verbose: true
     - id: test
       name: test
       entry: bash -c 'pipenv run test'

@@ -1,4 +1,5 @@
 import struct
+from typing import List
 
 import bencodepy
 import requests
@@ -10,7 +11,7 @@ from app.dto.torrent_file import TorrentFile
 
 class Tracker:
     @staticmethod
-    def get_peers(torrent_file: TorrentFile) -> [str]:
+    def get_peers(torrent_file: TorrentFile) -> List[str]:
         tracker = torrent_file.tracker
         info_hash = torrent_file.sha1_info_hash.hex()
         left = torrent_file.length
@@ -20,7 +21,7 @@ class Tracker:
     def _get_peers(tracker: str, info_hash: str, left: int = 1024):
         sha1_info_hash = Tracker._url_encode_hash(info_hash)
         url = f"{tracker}?info_hash={sha1_info_hash}"
-        params = {
+        params: dict = {
             "peer_id": PEER_ID,
             "port": 6881,
             "uploaded": 0,

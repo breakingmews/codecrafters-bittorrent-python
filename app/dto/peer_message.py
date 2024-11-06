@@ -32,7 +32,7 @@ class Handshake:
         if peer_id:
             self.peer_id = peer_id
 
-    def encode(self):
+    def encode(self) -> bytes:
         encoded = (
             struct.pack("!B", self._length)
             + self._protocol.encode()
@@ -45,7 +45,7 @@ class Handshake:
     @staticmethod
     def decode(buffer: bytes):
         handshake = Handshake()
-        handshake.sha1_info_hash = buffer[28:48].hex()
+        handshake.sha1_info_hash = buffer[28:48]
         handshake.peer_id = buffer[48:68].hex()
         handshake.buffer = struct.unpack("!BBBBBBBB", buffer[20:28])
         return handshake
@@ -89,7 +89,7 @@ class BitField(PeerMessage):
 
     @staticmethod
     def decode(buffer: bytes):
-        _log.debug(f"Decoding BitField: {buffer}")
+        _log.debug(f"Decoding BitField: {buffer!r}")
         length, id_ = struct.unpack("!IB", buffer[:5])
         payload = bitstruct.unpack("u1" * 8 * (length - 1), buffer[5 : 5 + length])
         bitfield = BitField(id_=id_, length=length, payload=payload)
@@ -148,7 +148,7 @@ class Request(PeerMessage):
         return encoded
 
     def __repr__(self):
-        return f"length={self.length}, id_={self.id_}, piece_index={self.piece_index}, begin={self.begin}, block_size={self.block_size}"
+        return f"length={self.length}, id_={self.id_}, piece_index={self.piece_index}, begin={self.begin}, block_size={self.block_size}"  # noqa
 
 
 class Piece(PeerMessage):

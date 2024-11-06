@@ -13,7 +13,7 @@ from app.core.argparser import parse_args
 from app.core.config import log_config
 from app.dto.torrent_file import TorrentFile
 
-logging.basicConfig(**log_config)
+logging.basicConfig(**log_config)  # type: ignore[arg-type]
 _log = logging.getLogger(__name__)
 
 

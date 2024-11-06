@@ -8,14 +8,14 @@ class TestPeerMessages(unittest.TestCase):
     def test_encode_handshake(self):
         sha1_info_hash = b"c7e51462e85d8631c25f8c9b8c5479345a1de26b"
         encoded = Handshake(sha1_info_hash).encode()
-        expected = b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00c7e51462e85d8631c25f8c9b8c5479345a1de26b00112233445566777777"
+        expected = b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00c7e51462e85d8631c25f8c9b8c5479345a1de26b00112233445566777777"  # noqa
         self.assertEqual(expected, encoded)
 
     def test_decode_handshake(self):
-        buffer = b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00\xc7\xe5\x14b\xe8]\x861\xc2_\x8c\x9b\x8cTy4Z\x1d\xe2k\xb8/Qc{\xf2\xd2\x1f\xd8,*\x82Z69\xb0a\x9eH\xb8"
+        buffer = b"\x13BitTorrent protocol\x00\x00\x00\x00\x00\x00\x00\x00\xc7\xe5\x14b\xe8]\x861\xc2_\x8c\x9b\x8cTy4Z\x1d\xe2k\xb8/Qc{\xf2\xd2\x1f\xd8,*\x82Z69\xb0a\x9eH\xb8"  # noqa
         decoded = Handshake.decode(buffer)
         expected = Handshake(
-            sha1_info_hash="c7e51462e85d8631c25f8c9b8c5479345a1de26b",
+            sha1_info_hash=b"\xc7\xe5\x14b\xe8]\x861\xc2_\x8c\x9b\x8cTy4Z\x1d\xe2k",  # sha1_info_hash.hex(): "c7e51462e85d8631c25f8c9b8c5479345a1de26b"  # noqa
             peer_id="b82f51637bf2d21fd82c2a825a3639b0619e48b8",
         )
         self.assertEqual(expected, decoded)
@@ -51,6 +51,6 @@ class TestPeerMessages(unittest.TestCase):
         )
 
     def test_decode_metadata_response(self):
-        buffer = b"\x00\x00\x00\xb1\x14\x10d8:msg_typei1e5:piecei0e10:total_sizei132eed6:lengthi636505e4:name11:magnet1.gif12:piece lengthi262144e6:pieces60:;F\xa9m\x9b\xc3qm\x1bu\xda\x91\xe6\xd7S\xa7\x93\xad\x1c\xef\xed\xa4\x17\xcb\\\x1c\xdb\xf8A\x12\\A-\xa0\xbe\xc9\xdb\x83\x01\xf3B/E\xb1\x05.-E\xda>*e\x16\xe1\xbb\x1f\x1d\xb0\x073e"
+        buffer = b"\x00\x00\x00\xb1\x14\x10d8:msg_typei1e5:piecei0e10:total_sizei132eed6:lengthi636505e4:name11:magnet1.gif12:piece lengthi262144e6:pieces60:;F\xa9m\x9b\xc3qm\x1bu\xda\x91\xe6\xd7S\xa7\x93\xad\x1c\xef\xed\xa4\x17\xcb\\\x1c\xdb\xf8A\x12\\A-\xa0\xbe\xc9\xdb\x83\x01\xf3B/E\xb1\x05.-E\xda>*e\x16\xe1\xbb\x1f\x1d\xb0\x073e"  # noqa
         metadata: Data = Data.decode(buffer)
         self.assertEqual(dict, type(metadata.payload))

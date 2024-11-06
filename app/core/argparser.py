@@ -8,7 +8,7 @@ def default_filename() -> str:
 
 
 def parse_args() -> Namespace:
-    sample_magnet_link = '"magnet:?xt=urn:btih:d69f91e6b2ae4c542468d1073a71d4ea13879a7f&dn=sample.torrent&tr=http://bittorrent-test-tracker.codecrafters.io/announce"'
+    sample_magnet_link = '"magnet:?xt=urn:btih:d69f91e6b2ae4c542468d1073a71d4ea13879a7f&dn=sample.torrent&tr=http://bittorrent-test-tracker.codecrafters.io/announce"'  # noqa
 
     parser = argparse.ArgumentParser(
         description="BitTorrent Client", prog="./bittorrent.sh"

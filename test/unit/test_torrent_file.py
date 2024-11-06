@@ -7,7 +7,7 @@ from app.dto.torrent_file import Block, TorrentFile
 class TestTorrentFile(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.TEST_DATA_DIR = os.path.join(
+        cls.TEST_DATA_DIR = os.path.join(  # type: ignore
             os.path.dirname(__file__),
             "..",
             "data",
@@ -15,7 +15,7 @@ class TestTorrentFile(unittest.TestCase):
 
     def test_decode_torrent_file(self):
         # arrange
-        filepath = os.path.join(self.TEST_DATA_DIR, "test.torrent")
+        filepath = os.path.join(self.TEST_DATA_DIR, "test.torrent")  # type: ignore
 
         # act
         file = TorrentFile.from_file(filepath)
@@ -49,7 +49,7 @@ class TestTorrentFile(unittest.TestCase):
 
     def test_decode_torrent_file_congratulations(self):
         # arrange
-        filepath = os.path.join(self.TEST_DATA_DIR, "congratulations.torrent")
+        filepath = os.path.join(self.TEST_DATA_DIR, "congratulations.torrent")  # type: ignore
 
         # act
         file = TorrentFile.from_file(filepath)

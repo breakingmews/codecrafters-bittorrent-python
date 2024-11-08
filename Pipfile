@@ -23,7 +23,7 @@ yamllint = "*"
 python_version = "3.13"
 
 [scripts]
-test = "python -m unittest discover -s test/unit -v"
+test = "python -m unittest discover -s test -p *.py -v"
 pre-commit-format = "ruff format --check"
 format = "ruff format"
 pre-commit-fix = "ruff check --extend-select I"

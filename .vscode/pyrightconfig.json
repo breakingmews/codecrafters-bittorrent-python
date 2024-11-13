@@ -1,0 +1,39 @@
+{
+    "include": [
+        "app",
+        "tests"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        ".git",
+        "dist"
+    ],
+    "ignore": [
+        "app/generated"
+    ],
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": false,
+    "pythonVersion": "3.13",
+    "pythonPlatform": "Linux",
+    "executionEnvironments": [
+        {
+            "root": ".",
+            "extraPaths": [
+                "app",
+                "tests"
+            ]
+        }
+    ],
+    "typeCheckingMode": "basic",
+    "useLibraryCodeForTypes": true,
+    "venvPath": "/home/nastya/.local/share/virtualenvs/codecrafters-bittorrent-python-4Z6Z_6dh",
+    "venv": ".venv",
+
+    "stubPath": "typings",
+    "analysis": {
+        "autoImportCompletions": true,
+        "autoSearchPaths": true,
+        "useLibraryCodeForTypes": true
+    }
+}

@@ -1,11 +1,7 @@
 import json
 import logging
 
-from app.bittorrent.client import (
-    MagnetClient,
-    download,
-    save_file,
-)
+from app.bittorrent.client import MagnetClient, TorrentClient
 from app.bittorrent.codec import decode_value
 from app.bittorrent.peer import Peer
 from app.bittorrent.tracker import Tracker
@@ -63,8 +59,8 @@ def main():
 
             torrent_file = TorrentFile.from_file(filepath)
 
-            content = download(torrent_file, piece_nr)
-            save_file(destination, content)
+            content = TorrentClient.download(torrent_file, piece_nr)
+            TorrentClient.save_file(destination, content)
 
         case Command.DOWNLOAD:
             destination = args.destination
@@ -72,8 +68,8 @@ def main():
 
             torrent_file = TorrentFile.from_file(filepath)
 
-            content = download(torrent_file)
-            save_file(destination, content)
+            content = TorrentClient.download(torrent_file)
+            TorrentClient.save_file(destination, content)
 
         case Command.MAGNET_PARSE:
             magnet_link = args.magnet_link

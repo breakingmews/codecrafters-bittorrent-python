@@ -12,44 +12,67 @@ from app.dto.torrent_file import TorrentFile
 _log = logging.getLogger(__name__)
 
 
-def save_file(destination: str, content: bytes):
-    with open(destination, "wb") as f:
-        f.write(content)
-    _log.info(f"Wrote file to {destination} - {len(content)} bytes")
+class TorrentClient:
+    @staticmethod
+    def save_file(destination: str, content: bytes) -> None:
+        """
+        Save the given content to the specified destination file.
 
+        :param destination: The path to the file where the content will be saved.
+        :param content: The content to be saved in the file.
+        """
+        try:
+            with open(destination, "wb") as f:
+                f.write(content)
+            _log.info(f"Wrote file to {destination} - {len(content)} bytes")
+        except IOError as e:
+            _log.error(f"Failed to write file to {destination}: {e}")
 
-def download(
-    torrent_file: TorrentFile,
-    piece_nr: Optional[int] = None,
-    peer: Optional[Peer] = None,
-):
-    if not peer:
-        _log.debug(f"{torrent_file}")
-        peers = Tracker.get_peers(torrent_file)
-        _log.debug(f"\nPeers:\n{"\n".join(peers)}")
+    @staticmethod
+    def download(
+        torrent_file: TorrentFile,
+        piece_nr: Optional[int] = None,
+        peer: Optional[Peer] = None,
+    ) -> bytes:
+        """
+        Download the specified piece or all pieces of the torrent file from a peer.
+        """
+        if not peer:
+            _log.debug(f"{torrent_file}")
+            peers = Tracker.get_peers(torrent_file)
+            _log.debug(f"\nPeers:\n{'\n'.join(peers)}")
 
-        peer = Peer(peers[random.randint(0, len(peers) - 1)])
-        peer.shake_hands(torrent_file.sha1_info_hash)
-        peer.receive_bitfield()
-        peer.send_interested()
+            if not peers:
+                _log.error("No peers found")
+                return b""
 
-    pieces = []
-    if piece_nr is not None:
-        piece = peer.request_piece(torrent_file, piece_nr)
-        pieces.append(piece)
-    else:
-        for ix in range(len(torrent_file.pieces)):
-            piece = peer.request_piece(torrent_file, ix)
+            peer = Peer(peers[random.randint(0, len(peers) - 1)])
+            peer.shake_hands(torrent_file.sha1_info_hash)
+            peer.receive_bitfield()
+            peer.send_interested()
+
+        pieces = []
+        if piece_nr is not None:
+            piece = peer.request_piece(torrent_file, piece_nr)
             pieces.append(piece)
+        else:
+            for ix in range(len(torrent_file.pieces)):
+                piece = peer.request_piece(torrent_file, ix)
+                pieces.append(piece)
 
-    content = b"".join(pieces)
-    return content
+        content = b"".join(pieces)
+        return content
 
 
 class MagnetClient:
     @staticmethod
     def parse_magnet_link(link: str):
         """
+        Parse a magnet link and extract the info hash, filename, and tracker URL.
+
+        :param link: The magnet link to be parsed.
+        :return: A Magnet object containing the parsed info hash, filename, and tracker URL.
+
         Example of magnet link:
         magnet:?xt=urn:btih:d69f91e6b2ae4c542468d1073a71d4ea13879a7f&dn=sample.torrent&tr=http%3A%2F%2Fbittorrent-test-tracker.codecrafters.io%2Fannounce
         """
@@ -89,8 +112,10 @@ class MagnetClient:
 
         return torrent_file
 
-    def download(self, destination, piece_nr):
+    def download(self, destination, piece_nr) -> None:
         torrent_file = self.info()
         self.peer.send_interested()
-        content = download(torrent_file=torrent_file, piece_nr=piece_nr, peer=self.peer)
-        save_file(destination, content)
+        content = TorrentClient.download(
+            torrent_file=torrent_file, piece_nr=piece_nr, peer=self.peer
+        )
+        TorrentClient.save_file(destination, content)

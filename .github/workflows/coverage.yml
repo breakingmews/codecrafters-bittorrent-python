@@ -1,5 +1,5 @@
 ---
-name: Badges
+name: Coverage
 
 on:
   push:

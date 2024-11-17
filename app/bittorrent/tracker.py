@@ -29,7 +29,7 @@ class Tracker:
             "left": left,
             "compact": 1,
         }
-        response = requests.get(url, params)
+        response = requests.get(url, params, timeout=5)
         decoded = bencodepy.decode(response.content)[b"peers"]
         peers = []
         start = 0

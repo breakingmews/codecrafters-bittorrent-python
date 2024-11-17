@@ -13,6 +13,7 @@ requests = "*"
 tqdm = "*"
 
 [dev-packages]
+bandit = "*"
 flake8 = "*"
 mypy = "*"
 pre-commit = "*"
@@ -31,3 +32,4 @@ fix = "ruff check --extend-select I --fix"
 stylecheck = "flake8 . --max-line-length 99 --extend-ignore E203"
 typecheck = "mypy . --install-types --non-interactive --ignore-missing-imports --check-untyped-defs"
 yamllint = "yamllint ."
+bandit = "bandit -r ."

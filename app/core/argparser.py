@@ -57,7 +57,7 @@ def parse_args() -> Namespace:
         dest="destination",
         type=str,
         default=default_filename(),
-        help="/tmp/test-piece-0",
+        help="/Downloads/test-piece-0",
     )
     parser_download_piece.add_argument(
         "torrent_filepath", type=str, help=" ./data/sample.torrent"
@@ -73,7 +73,7 @@ def parse_args() -> Namespace:
         dest="destination",
         type=str,
         default=default_filename(),
-        help="/tmp/test-piece-0",
+        help="/Downloads/test-piece-0",
     )
     parser_download.add_argument(
         "torrent_filepath", type=str, help="./data/sample.torrent"
@@ -109,7 +109,7 @@ def parse_args() -> Namespace:
         dest="destination",
         type=str,
         default=default_filename(),
-        help="/tmp/test-piece-0",
+        help="/Downloads/test-piece-0",
     )
     parser_magnet_download_piece.add_argument(
         "magnet_link", type=str, help=sample_magnet_link
@@ -125,7 +125,7 @@ def parse_args() -> Namespace:
         dest="destination",
         type=str,
         default=default_filename(),
-        help="/tmp/test-piece-0",
+        help="/Downloads/test-piece-0",
     )
     parser_magnet_download.add_argument(
         "magnet_link", type=str, help=sample_magnet_link

@@ -107,7 +107,7 @@ class TorrentFile:
     def sha1_info_hash(self):
         if b"sha1_info_hash" in self.info.keys():
             return self.info[b"sha1_info_hash"]
-        return hashlib.sha1(bencodepy.encode(self.info)).digest()
+        return hashlib.sha1(bencodepy.encode(self.info)).digest()  # nosec
 
     def __repr__(self):
         return (

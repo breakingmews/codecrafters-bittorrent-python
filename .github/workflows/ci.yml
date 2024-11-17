@@ -41,3 +41,6 @@ jobs:
       - name: Format
         run: |
           pipenv run pre-commit-format
+      - name: Bandit checks
+        run: |
+          pipenv run bandit

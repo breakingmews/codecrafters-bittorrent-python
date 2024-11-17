@@ -53,6 +53,3 @@ jobs:
       - name: Bandit Checks
         run: |
           pipenv run bandit
-      - name: Coverage Badge
-        run: |
-          pipenv run coverage-xml && pipenv run coverage-badge

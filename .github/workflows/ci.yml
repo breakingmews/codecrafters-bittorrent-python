@@ -35,6 +35,9 @@ jobs:
       - name: Test
         run: |
           pipenv run test
+      - name: Test Coverage
+        run: |
+          pipenv run test-coverage
       - name: Typecheck
         run: |
           pipenv run typecheck

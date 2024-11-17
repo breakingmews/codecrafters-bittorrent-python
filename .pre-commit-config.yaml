@@ -38,6 +38,11 @@ repos:
         entry: bash -c 'pipenv run test'
         language: system
 
+      - id: test coverage
+        name: test coverage
+        entry: bash -c 'pipenv run test-coverage'
+        language: system
+
       - id: yamllint
         name: yamllint
         entry: bash -c 'pipenv run yamllint'

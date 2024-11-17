@@ -2,32 +2,53 @@
 repos:
   - repo: local
     hooks:
+      - id: pipenvcheck
+        name: pipenvcheck
+        entry: bash -c 'pipenv check'
+        language: system
+
+      - id: lint
+        name: lint
+        entry: bash -c 'pipenv run lint'
+        language: system
+
       - id: fix
         name: fix
         entry: bash -c 'pipenv run pre-commit-fix'
         language: system
+
       - id: format
         name: format
         entry: bash -c 'pipenv run pre-commit-format'
         language: system
+
       - id: stylecheck
         name: stylecheck
         entry: bash -c 'pipenv run stylecheck'
         language: system
+
       - id: typecheck
         name: typecheck
         entry: bash -c 'pipenv run typecheck'
         language: system
         verbose: true
+
       - id: test
         name: test
         entry: bash -c 'pipenv run test'
         language: system
+
       - id: yamllint
         name: yamllint
         entry: bash -c 'pipenv run yamllint'
         language: system
+
       - id: banditcheck
         name: banditcheck
         entry: bash -c 'pipenv run bandit'
+        language: system
+
+      - id: radon-complexity
+        name: radon-complexity
+        entry: bash -c 'pipenv run radon'
         language: system

@@ -26,6 +26,12 @@ jobs:
       - name: Install dependencies
         run: |
           pipenv install --dev
+      - name: Pipenv Check
+        run: |
+          pipenv check
+      - name: Lint
+        run: |
+          pipenv run lint
       - name: Test
         run: |
           pipenv run test
@@ -41,6 +47,6 @@ jobs:
       - name: Format
         run: |
           pipenv run pre-commit-format
-      - name: Bandit checks
+      - name: Bandit Checks
         run: |
           pipenv run bandit

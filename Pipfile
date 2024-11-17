@@ -10,18 +10,19 @@ sort_pipfile = true
 "bencode.py" = "*"
 bitstruct = "*"
 requests = "*"
-tqdm = "*"
 
 [dev-packages]
 bandit = "*"
 flake8 = "*"
 mypy = "*"
 pre-commit = "*"
+pylint = "*"
+radon = "*"
 ruff = "*"
 yamllint = "*"
 
 [requires]
-python_version = "3.13"
+python_version = "3.12"
 
 [scripts]
 test = "python -m unittest discover -s test -p *.py -v"
@@ -33,3 +34,5 @@ stylecheck = "flake8 . --max-line-length 99 --extend-ignore E203"
 typecheck = "mypy . --install-types --non-interactive --ignore-missing-imports --check-untyped-defs"
 yamllint = "yamllint ."
 bandit = "bandit -r ."
+lint = "pylint . --disable=C0114,C0115,C0116,W1203 --fail-under=9"
+radon = "radon cc . -nb --total-average --show-complexity"

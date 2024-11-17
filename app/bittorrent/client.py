@@ -46,7 +46,7 @@ class TorrentClient:
                 _log.error("No peers found")
                 return b""
 
-            peer = Peer(peers[random.randint(0, len(peers) - 1)])
+            peer = Peer(peers[random.randint(0, len(peers) - 1)])  # nosec
             peer.shake_hands(torrent_file.sha1_info_hash)
             peer.receive_bitfield()
             peer.send_interested()
@@ -92,7 +92,7 @@ class MagnetClient:
         self.magnet = MagnetClient.parse_magnet_link(link)
 
         peers = Tracker.get_peers_from_magnet(self.magnet)
-        self.peer = Peer(peers[random.randint(0, len(peers) - 1)])
+        self.peer = Peer(peers[random.randint(0, len(peers) - 1)])  # nosec
 
     def do_handshake(self) -> Tuple[Handshake, ExtensionHandshake | None]:
         """

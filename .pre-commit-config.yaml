@@ -27,3 +27,7 @@ repos:
         name: yamllint
         entry: bash -c 'pipenv run yamllint'
         language: system
+      - id: banditcheck
+        name: banditcheck
+        entry: bash -c 'pipenv run bandit'
+        language: system

@@ -35,4 +35,4 @@ typecheck = "mypy . --install-types --non-interactive --ignore-missing-imports -
 yamllint = "yamllint ."
 bandit = "bandit -r ."
 lint = "pylint . --disable=C0114,C0115,C0116,W1203 --fail-under=9"
-radon = "radon cc . -nb --total-average --show-complexity"
+radon = "radon -v cc . -nb --total-average --show-complexity"
